@@ -42,8 +42,8 @@ photoInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-        alert('La imagen es muy grande. Máximo 2MB.');
+    if (file.size > 10 * 1024 * 1024) {
+        alert('La imagen es muy grande. Máximo 10MB.');
         photoInput.value = '';
         return;
     }
