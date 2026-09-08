@@ -69,12 +69,9 @@ function reportPopup(report) {
     `;
 }
 
-function getReports() {
-    return JSON.parse(localStorage.getItem('bacheReports') || '[]');
-}
-
-function saveReports(reports) {
-    localStorage.setItem('bacheReports', JSON.stringify(reports));
+function fetchReports() {
+    return fetch('reportes.php')
+        .then(function(res) { return res.json(); });
 }
 
 function createIcon(color) {
@@ -93,13 +90,14 @@ function createIcon(color) {
 }
 
 function loadMarkers() {
-    const reports = getReports();
-    reports.forEach(function(report) {
-        const color = severityColors[report.severity] || '#3498db';
-        L.marker([report.lat, report.lng], { icon: createIcon(color) })
-            .addTo(map)
-            .bindPopup(reportPopup(report));
-    });
+    fetchReports().then(function(reports) {
+        reports.forEach(function(report) {
+            const color = severityColors[report.severity] || '#3498db';
+            L.marker([report.lat, report.lng], { icon: createIcon(color) })
+                .addTo(map)
+                .bindPopup(reportPopup(report));
+        });
+    }).catch(function() {});
 }
 
 const searchInput = document.getElementById('search-input');
@@ -274,19 +272,30 @@ reportForm.addEventListener('submit', function(e) {
         date: new Date().toLocaleString('es-AR')
     };
 
-    const reports = getReports();
-    reports.push(report);
-    saveReports(reports);
+    fetch('reportes.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(report)
+    })
+        .then(function(res) { return res.json(); })
+        .then(function(result) {
+            if (result.error) {
+                showStatus(result.error, 'error');
+                return;
+            }
+            const color = severityColors[severity] || '#3498db';
+            L.marker([report.lat, report.lng], { icon: createIcon(color) })
+                .addTo(map)
+                .bindPopup(reportPopup(report))
+                .openPopup();
 
-    const color = severityColors[severity] || '#3498db';
-    L.marker([report.lat, report.lng], { icon: createIcon(color) })
-        .addTo(map)
-        .bindPopup(reportPopup(report))
-        .openPopup();
-
-    modalOverlay.classList.add('hidden');
-    pendingLatLng = null;
-    pendingPhoto = null;
+            modalOverlay.classList.add('hidden');
+            pendingLatLng = null;
+            pendingPhoto = null;
+        })
+        .catch(function() {
+            showStatus('No se pudo guardar el reporte.', 'error');
+        });
 });
 
 loadMarkers();
