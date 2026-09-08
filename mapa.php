@@ -1,3 +1,14 @@
+<?php
+$reportes = [];
+$datosPath = __DIR__ . '/reportes.json';
+if (file_exists($datosPath)) {
+    $json = file_get_contents($datosPath);
+    $datos = json_decode($json, true);
+    if (is_array($datos)) {
+        $reportes = $datos;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,7 +21,7 @@
 <body>
     <nav class="navbar">
         <div class="navbar-brand">Reporte de Baches</div>
-        <a href="index.html" class="btn-back">📝 Reportar problema</a>
+        <a href="index.php" class="btn-back">📝 Reportar problema</a>
         <div class="navbar-search">
             <input type="text" id="search-input" placeholder="Buscar calle o ciudad..." autocomplete="off">
             <div id="search-results"></div>
@@ -27,12 +38,13 @@
     <div id="modal-overlay" class="hidden">
         <div id="modal">
             <h2>Reportar Bache</h2>
+            <p class="modal-hint" id="modal-hint">Hacé clic en el mapa para fijar el punto afectado.</p>
             <form id="report-form">
                 <label for="description">Descripción del problema:</label>
-                <textarea id="description" rows="3" placeholder="Ej: Bache grande frente al hospital..." required></textarea>
+                <textarea id="description" name="description" rows="3" placeholder="Ej: Bache grande frente al hospital..." required></textarea>
 
                 <label for="severity">Gravedad:</label>
-                <select id="severity" required>
+                <select id="severity" name="severity" required>
                     <option value="">Seleccionar...</option>
                     <option value="bajo">Bajo - Pequeño hueco</option>
                     <option value="medio">Medio - Daño considerable</option>
@@ -41,11 +53,14 @@
 
                 <label for="photo">Foto del bache:</label>
                 <div class="photo-buttons">
-                    <input type="file" id="photo" accept="image/*" class="hidden">
+                    <input type="file" id="photo" name="photo" accept="image/*" class="hidden">
                     <button type="button" id="gallery-btn" class="btn-photo">Subir de la galería</button>
                     <button type="button" id="camera-btn" class="btn-photo">Abrir cámara</button>
                 </div>
                 <div id="photo-preview" class="hidden"><img id="preview-img" alt="Vista previa"></div>
+
+                <input type="hidden" id="report-lat" name="lat">
+                <input type="hidden" id="report-lng" name="lng">
 
                 <div class="modal-buttons">
                     <button type="submit" class="btn-primary">Guardar</button>
@@ -55,6 +70,9 @@
         </div>
     </div>
 
+    <script>
+        window.REPORTES = <?php echo json_encode($reportes, JSON_UNESCAPED_UNICODE); ?>;
+    </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
