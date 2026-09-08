@@ -9,7 +9,6 @@ const reportForm = document.getElementById('report-form');
 const cancelBtn = document.getElementById('cancel-btn');
 const descriptionInput = document.getElementById('description');
 const severitySelect = document.getElementById('severity');
-const modalHint = document.getElementById('modal-hint');
 
 let pendingLatLng = null;
 let pendingPhoto = null;
@@ -43,44 +42,39 @@ photoInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    pendingPhoto = file;
-    previewImg.src = URL.createObjectURL(file);
-    photoPreview.classList.remove('hidden');
+    if (file.size > 10 * 1024 * 1024) {
+        alert('La imagen es muy grande. Máximo 10MB.');
+        photoInput.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        pendingPhoto = ev.target.result;
+        previewImg.src = pendingPhoto;
+        photoPreview.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
 });
 
 function reportPopup(report) {
-    const photoHtml = report.foto
-        ? `<img src="${report.foto}" class="latest-photo" onclick="window.open('${report.foto}','_blank')">`
+    const photoHtml = report.photo
+        ? `<img src="${report.photo}" class="latest-photo" onclick="window.open('${report.photo}','_blank')">`
         : '<em>Sin foto</em>';
-    const tipo = report.tipo
-        ? `<em>${report.tipo}</em><br>`
-        : '';
-    const ubicacion = report.ubicacion
-        ? `<small>📍 ${report.ubicacion}</small><br>`
-        : '';
-    const telefono = report.telefono
-        ? `<small>📞 ${report.telefono}</small><br>`
-        : '';
     return `
-        <strong>${tipo}Bache - ${(report.severidad || report.severity || '').toUpperCase()}</strong><br>
+        <strong>Bache - ${report.severity.toUpperCase()}</strong><br>
         ${photoHtml}
-        ${report.descripcion || report.description}<br>
-        ${ubicacion}${telefono}
+        ${report.description}<br>
         <small>${report.date}</small>
     `;
 }
 
-function loadMarkers() {
-    const reports = window.REPORTES || [];
-    reports.forEach(function(report) {
-        const lat = parseFloat(report.lat);
-        const lng = parseFloat(report.lng);
-        if (isNaN(lat) || isNaN(lng)) return;
-        const color = severityColors[report.severidad || report.severity] || '#3498db';
-        L.marker([lat, lng], { icon: createIcon(color) })
-            .addTo(map)
-            .bindPopup(reportPopup(report));
-    });
+function getReports() {
+    return JSON.parse(localStorage.getItem('bacheReports') || '[]');
+}
+
+function saveReports(reports) {
+    localStorage.setItem('bacheReports', JSON.stringify(reports));
 }
 
 function createIcon(color) {
@@ -95,6 +89,16 @@ function createIcon(color) {
         "></div>`,
         iconSize: [24, 24],
         iconAnchor: [12, 12]
+    });
+}
+
+function loadMarkers() {
+    const reports = getReports();
+    reports.forEach(function(report) {
+        const color = severityColors[report.severity] || '#3498db';
+        L.marker([report.lat, report.lng], { icon: createIcon(color) })
+            .addTo(map)
+            .bindPopup(reportPopup(report));
     });
 }
 
@@ -230,9 +234,6 @@ map.on('click', function(e) {
     }
 
     pendingLatLng = e.latlng;
-    document.getElementById('report-lat').value = e.latlng.lat;
-    document.getElementById('report-lng').value = e.latlng.lng;
-    modalHint.classList.add('hidden');
     modalOverlay.classList.remove('hidden');
     descriptionInput.value = '';
     severitySelect.value = '';
@@ -264,35 +265,28 @@ reportForm.addEventListener('submit', function(e) {
 
     if (!description || !severity || !pendingLatLng) return;
 
-    const data = new FormData();
-    data.append('tipo', 'bache');
-    data.append('descripcion', description);
-    data.append('severidad', severity);
-    data.append('lat', pendingLatLng.lat.toString());
-    data.append('lng', pendingLatLng.lng.toString());
-    data.append('ajax', '1');
-    if (pendingPhoto) {
-        data.append('foto', pendingPhoto);
-    }
+    const report = {
+        lat: pendingLatLng.lat,
+        lng: pendingLatLng.lng,
+        description: description,
+        severity: severity,
+        photo: pendingPhoto,
+        date: new Date().toLocaleString('es-AR')
+    };
 
-    fetch('api.php', { method: 'POST', body: data })
-        .then(function(res) { return res.json(); })
-        .then(function(result) {
-            if (!result.ok) throw new Error(result.error || 'Error al guardar.');
-            modalOverlay.classList.add('hidden');
-            pendingLatLng = null;
-            pendingPhoto = null;
+    const reports = getReports();
+    reports.push(report);
+    saveReports(reports);
 
-            const color = severityColors[severity] || '#3498db';
-            L.marker([result.reporte.lat, result.reporte.lng], { icon: createIcon(color) })
-                .addTo(map)
-                .bindPopup(reportPopup(result.reporte))
-                .openPopup();
-            showStatus('Reporte guardado correctamente.', 'success');
-        })
-        .catch(function(err) {
-            showStatus(err.message, 'error');
-        });
+    const color = severityColors[severity] || '#3498db';
+    L.marker([report.lat, report.lng], { icon: createIcon(color) })
+        .addTo(map)
+        .bindPopup(reportPopup(report))
+        .openPopup();
+
+    modalOverlay.classList.add('hidden');
+    pendingLatLng = null;
+    pendingPhoto = null;
 });
 
 loadMarkers();
