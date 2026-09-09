@@ -8,3 +8,13 @@ CREATE TABLE IF NOT EXISTS contactos (
     mensaje TEXT,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE reportes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_problema VARCHAR( fifty ) NOT NULL,
+    descripcion TEXT NOT NULL,
+    ubicacion VARCHAR(255) NOT NULL,
+    foto_url VARCHAR(255),
+    telefono VARCHAR(50) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
