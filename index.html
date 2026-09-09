@@ -8,8 +8,17 @@
 </head>
 <body>
     <header class="page-header">
-        <h1>Reporte de Baches</h1>
-        <p>Reporta un problema en la vía pública de forma rápida</p>
+        <div class="header-top">
+            <div class="header-brand">
+                <h1>Reporte de Baches</h1>
+                <p>Reporta un problema en la vía pública de forma rápida</p>
+            </div>
+            <span class="header-date" id="header-date">Cargando fecha...</span>
+            <nav class="header-nav">
+                <a href="index.html" class="nav-link active">Reportar</a>
+                <a href="mapa.html" class="nav-link">Ver mapa</a>
+            </nav>
+        </div>
     </header>
 
     <main class="form-container">
@@ -43,8 +52,8 @@
                 <label>Foto del problema</label>
                 <div class="photo-actions">
                     <input type="file" id="foto" name="foto" accept="image/*" class="hidden">
-                    <button type="button" id="galeria-btn" class="btn-photo">📁 Subir foto</button>
-                    <button type="button" id="camara-btn" class="btn-photo">📷 Sacar con la cámara</button>
+                    <button type="button" id="galeria-btn" class="btn-photo">Subir foto</button>
+                    <button type="button" id="camara-btn" class="btn-photo">Sacar con la cámara</button>
                 </div>
                 <div id="foto-preview" class="hidden">
                     <img id="preview-img" alt="Vista previa de la foto" style="max-width:100%; height:auto; max-height:300px; object-fit:contain; border-radius:6px;">
@@ -58,7 +67,7 @@
 
             <button type="submit" class="btn-primary">Enviar reporte</button>
 
-            <a href="mapa.html" class="btn-map">🗺️ Ver mapa de reportes</a>
+            <a href="mapa.html" class="btn-map">Ver mapa de reportes</a>
         </form>
     </main>
 

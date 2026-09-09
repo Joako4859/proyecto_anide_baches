@@ -105,6 +105,16 @@ const searchResults = document.getElementById('search-results');
 const locateBtn = document.getElementById('locate-btn');
 const statusBar = document.getElementById('status-bar');
 
+const headerDate = document.getElementById('header-date');
+if (headerDate) {
+    headerDate.textContent = new Date().toLocaleDateString('es-AR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+}
+
 let searchTimer = null;
 let geocodeAbort = null;
 

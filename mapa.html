@@ -8,15 +8,27 @@
     <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">Reporte de Baches</div>
-        <a href="index.html" class="btn-back">📝 Reportar problema</a>
+    <header class="page-header">
+        <div class="header-top">
+            <div class="header-brand">
+                <h1>Reporte de Baches</h1>
+                <p>Mapa de reportes en la vía pública</p>
+            </div>
+            <span class="header-date" id="header-date">Cargando fecha...</span>
+            <nav class="header-nav">
+                <a href="index.html" class="nav-link">Reportar</a>
+                <a href="mapa.html" class="nav-link active">Ver mapa</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="map-toolbar">
         <div class="navbar-search">
             <input type="text" id="search-input" placeholder="Buscar calle o ciudad..." autocomplete="off">
             <div id="search-results"></div>
         </div>
-        <button type="button" id="locate-btn" class="btn-locate">📍 Mi ubicación</button>
-    </nav>
+        <button type="button" id="locate-btn" class="btn-locate">Mi ubicación</button>
+    </div>
 
     <div class="status-bar hidden" id="status-bar"></div>
 

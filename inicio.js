@@ -2,6 +2,16 @@ const fotoInput = document.getElementById('foto');
 const preview = document.getElementById('foto-preview');
 const previewImg = document.getElementById('preview-img');
 
+const fechaElem = document.getElementById('header-date');
+if (fechaElem) {
+    fechaElem.textContent = new Date().toLocaleDateString('es-AR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+}
+
 function showPreview(file) {
     previewImg.src = URL.createObjectURL(file);
     preview.classList.remove('hidden');
