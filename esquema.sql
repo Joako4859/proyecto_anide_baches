@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS mi_pagina CHARACTER SET utf8mb4;
-USE mi_pagina;
+CREATE DATABASE IF NOT EXISTS anide_formulario CHARACTER SET utf8mb4;
+USE anide_formulario;
 
 CREATE TABLE IF NOT EXISTS contactos (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS contactos (
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE reportes (
+CREATE TABLE IF NOT EXISTS reportes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    tipo_problema VARCHAR( fifty ) NOT NULL,
+    tipo_problema VARCHAR(50) NOT NULL,
     descripcion TEXT NOT NULL,
     ubicacion VARCHAR(255) NOT NULL,
     foto_url VARCHAR(255),
