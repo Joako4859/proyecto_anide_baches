@@ -1,8 +1,38 @@
 const map = L.map('map').setView([-34.6037, -58.3816], 13);
 
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles © Esri'
+    attribution: 'Map data © OpenStreetMap contributors, Esri',
+    maxZoom: 19
 }).addTo(map);
+
+// Animaciones para los botones del header
+const botones = ['btnReportar', 'btnMapa', 'btnMisReportes'];
+botones.forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+        btn.addEventListener('click', () => {
+            btn.style.color = 'var(--accent-deep)';
+            btn.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                btn.style.color = 'var(--ink-soft)';
+                btn.style.transform = 'scale(1)';
+            }, 200);
+        });
+    }
+});
+
+// Efecto visual al hacer clic en "Mi ubicación"
+const btnUbicacion = document.getElementById('btnUbicacion');
+if (btnUbicacion) {
+    btnUbicacion.addEventListener('click', () => {
+        btnUbicacion.style.transform = 'scale(0.95)';
+        btnUbicacion.style.backgroundColor = '#D35400';
+        setTimeout(() => {
+            btnUbicacion.style.transform = 'scale(1)';
+            btnUbicacion.style.backgroundColor = 'var(--accent)';
+        }, 150);
+    });
+}
 
 const modalOverlay = document.getElementById('modal-overlay');
 const reportForm = document.getElementById('report-form');
@@ -28,34 +58,40 @@ const previewImg = document.getElementById('preview-img');
 const galleryBtn = document.getElementById('gallery-btn');
 const cameraBtn = document.getElementById('camera-btn');
 
-galleryBtn.addEventListener('click', function() {
-    photoInput.removeAttribute('capture');
-    photoInput.click();
-});
+if (galleryBtn) {
+    galleryBtn.addEventListener('click', function() {
+        photoInput.removeAttribute('capture');
+        photoInput.click();
+    });
+}
 
-cameraBtn.addEventListener('click', function() {
-    photoInput.setAttribute('capture', 'environment');
-    photoInput.click();
-});
+if (cameraBtn) {
+    cameraBtn.addEventListener('click', function() {
+        photoInput.setAttribute('capture', 'environment');
+        photoInput.click();
+    });
+}
 
-photoInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+if (photoInput) {
+    photoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-        alert('La imagen es muy grande. Máximo 10MB.');
-        photoInput.value = '';
-        return;
-    }
+        if (file.size > 10 * 1024 * 1024) {
+            alert('La imagen es muy grande. Máximo 10MB.');
+            photoInput.value = '';
+            return;
+        }
 
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-        pendingPhoto = ev.target.result;
-        previewImg.src = pendingPhoto;
-        photoPreview.classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
-});
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            pendingPhoto = ev.target.result;
+            previewImg.src = pendingPhoto;
+            photoPreview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    });
+}
 
 function reportPopup(report) {
     const photoHtml = report.photo
@@ -102,18 +138,8 @@ function loadMarkers() {
 
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
-const locateBtn = document.getElementById('locate-btn');
+const locateBtn = document.getElementById('btnUbicacion');
 const statusBar = document.getElementById('status-bar');
-
-const headerDate = document.getElementById('header-date');
-if (headerDate) {
-    headerDate.textContent = new Date().toLocaleDateString('es-AR', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    });
-}
 
 let searchTimer = null;
 let geocodeAbort = null;
@@ -180,7 +206,7 @@ searchInput.addEventListener('keydown', function(e) {
 });
 
 document.addEventListener('click', function(e) {
-    if (!e.target.closest('.navbar-search')) {
+    if (!e.target.closest('.search-bar')) {
         hideResults();
     }
 });
@@ -195,6 +221,19 @@ function setUserCity(lat, lng, cityName) {
         fillOpacity: 0.05
     }).addTo(map);
     showStatus('Solo se pueden reportar baches en ' + cityName + '.', 'success', 5000);
+}
+
+function reverseGeocode(lat, lng) {
+    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&accept-language=es&zoom=10')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            const cityName = data.address.city || data.address.town || data.address.village ||
+                data.address.municipality || data.address.state || 'tu ciudad';
+            setUserCity(lat, lng, cityName);
+        })
+        .catch(function() {
+            setUserCity(lat, lng, 'tu ciudad');
+        });
 }
 
 locateBtn.addEventListener('click', function() {
@@ -218,19 +257,6 @@ locateBtn.addEventListener('click', function() {
         showStatus('No se pudo obtener tu ubicación. Revisa los permisos.', 'error');
     });
 });
-
-function reverseGeocode(lat, lng) {
-    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&accept-language=es&zoom=10')
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            const cityName = data.address.city || data.address.town || data.address.village ||
-                data.address.municipality || data.address.state || 'tu ciudad';
-            setUserCity(lat, lng, cityName);
-        })
-        .catch(function() {
-            setUserCity(lat, lng, 'tu ciudad');
-        });
-}
 
 map.on('click', function(e) {
     if (userCity) {

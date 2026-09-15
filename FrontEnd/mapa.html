@@ -3,37 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Baches</title>
+    <title>Mapa de Reportes — ANIDE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <header class="page-header">
-        <div class="header-top">
-            <div class="header-brand">
-                <h1>Reporte de Baches</h1>
-                <p>Mapa de reportes en la vía pública</p>
-            </div>
-            <span class="header-date" id="header-date">Cargando fecha...</span>
-            <nav class="header-nav">
-                <a href="index.html" class="nav-link">Reportar</a>
-                <a href="mapa.html" class="nav-link active">Ver mapa</a>
-            </nav>
+    <header>
+        <div class="brand">
+            <h1>ANIDE — Reporte de Circulación</h1>
+            <p>Tu ciudad, tu voz</p>
         </div>
+        <nav>
+            <a href="index.html" id="btnReportar">Reportar</a>
+            <a href="mapa.html" id="btnMapa">Mapa</a>
+            <a href="mapa.html" id="btnMisReportes">Mis reportes</a>
+        </nav>
     </header>
 
-    <div class="map-toolbar">
-        <div class="navbar-search">
-            <input type="text" id="search-input" placeholder="Buscar calle o ciudad..." autocomplete="off">
-            <div id="search-results"></div>
+    <div class="layout">
+        <h2>🦊 Mapa de reportes</h2>
+        <p class="intro">
+            Explorá los reportes enviados por los vecinos y encontrá los puntos donde se registraron problemas de tránsito o mantenimiento.
+        </p>
+
+        <div class="search-bar">
+            <div class="search-wrap">
+                <input type="text" id="search-input" placeholder="Buscar calle o ciudad..." autocomplete="off">
+                <div id="search-results"></div>
+            </div>
+            <button id="btnUbicacion">Mi ubicación</button>
         </div>
-        <button type="button" id="locate-btn" class="btn-locate">Mi ubicación</button>
-    </div>
 
-    <div class="status-bar hidden" id="status-bar"></div>
+        <div class="status-bar hidden" id="status-bar"></div>
 
-    <div class="map-wrapper">
-        <div id="map" style="width:100%; height:420px;"></div>
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
     </div>
 
     <div id="modal-overlay" class="hidden">
@@ -66,6 +72,10 @@
             </form>
         </div>
     </div>
+
+    <footer>
+        © 2026 ANIDE Animación y Diseño — Todos los derechos reservados
+    </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>

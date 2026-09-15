@@ -3,21 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gracias por tu reporte</title>
+    <title>Gracias por tu reporte — ANIDE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../FrontEnd/inicio.css" />
 </head>
 <body>
-    <header class="page-header">
-        <h1>Reporte de Baches</h1>
+    <header>
+        <div class="brand">
+            <h1>ANIDE — Reporte de Circulación</h1>
+            <p>Tu ciudad, tu voz</p>
+        </div>
     </header>
 
-    <main class="form-container">
-        <div class="report-form">
-            <h2>¡Gracias por tu reporte!</h2>
-            <p style="text-align:center; margin-bottom:1.5rem;">Tu reporte fue registrado exitosamente. Ayudás a mejorar nuestra comunidad.</p>
-            <a href="../FrontEnd/index.html" class="btn-primary" style="display:block; text-align:center; text-decoration:none;">Reportar otro problema</a>
-            <a href="../FrontEnd/mapa.html" class="btn-map" style="margin-top:1rem;">Ver mapa de reportes</a>
+    <div class="layout">
+        <div class="panel">
+            <div class="panel-head">
+                <h3>¡Gracias por tu reporte!</h3>
+            </div>
+            <div class="panel-body">
+                <p style="text-align:center; margin:0 0 1.5rem 0; color:var(--ink-soft);">
+                    Tu reporte fue registrado exitosamente. Ayudás a mejorar nuestra comunidad.
+                </p>
+                <a href="../FrontEnd/index.html" class="submit-btn" style="display:block; text-align:center; text-decoration:none;">Reportar otro problema</a>
+                <a href="../FrontEnd/mapa.html" class="btn-map">Ver mapa de reportes</a>
+            </div>
         </div>
-    </main>
+    </div>
+
+    <footer>
+        © 2026 ANIDE Animación y Diseño — Todos los derechos reservados
+    </footer>
 </body>
 </html>

@@ -1,75 +1,81 @@
-        ñ<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Baches - Reportar Problema</title>
+    <title>Reporte de Circulación — ANIDE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="inicio.css" />
 </head>
 <body>
-    <header class="page-header">
-        <div class="header-top">
-            <div class="header-brand">
-                <h1>Reporte de Baches</h1>
-                <p>Reporta un problema en la vía pública de forma rápida</p>
-            </div>
-            <span class="header-date" id="header-date">Cargando fecha...</span>
-            <nav class="header-nav">
-                <a href="index.html" class="nav-link active">Reportar</a>
-                <a href="mapa.html" class="nav-link">Ver mapa</a>
-            </nav>
+    <header>
+        <div class="brand">
+            <h1>ANIDE — Reporte de Circulación</h1>
+            <p>Tu ciudad, tu voz</p>
         </div>
+        <nav>
+            <a href="index.html" id="btnReportar">Reportar</a>
+            <a href="mapa.html" id="btnMapa">Mapa</a>
+            <a href="mapa.html" id="btnMisReportes">Mis reportes</a>
+        </nav>
     </header>
 
-    <main class="form-container">
-        <form id="report-form" class="report-form" action="../BackEnd/registrar_reporte.php" method="POST" enctype="multipart/form-data">
-            <h2>Reportar un problema</h2>
+    <div class="layout">
+        <div class="pitch">
+            <h2>🦊 Un canal directo</h2>
+            <p>Reportá baches, semáforos apagados o problemas de tránsito. Tu reporte llega a quienes pueden resolverlo.</p>
+        </div>
 
-            <div class="form-group">
-                <label for="tipo">Tipo de problema</label>
-                <select id="tipo" name="tipo_problema" required>
-                    <option value="">Seleccionar...</option>
-                    <option value="bache">Bache</option>
-                    <option value="luminaria">Luminaria en mal estado</option>
-                    <option value="vereda">Vereda rota</option>
-                    <option value="basura">Acumulación de basura</option>
-                    <option value="pluvial">Desagüe tapado / inundación</option>
-                    <option value="otro">Otro</option>
-                </select>
+        <div class="panel">
+            <div class="panel-head">
+                <h3>Nuevo reporte</h3>
             </div>
+            <div class="panel-body">
+                <form id="report-form" action="../BackEnd/registrar_reporte.php" method="POST" enctype="multipart/form-data">
+                    <label for="tipo">Tipo de problema</label>
+                    <select id="tipo" name="tipo_problema" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="bache">Bache</option>
+                        <option value="semaforo">Semáforo apagado</option>
+                        <option value="basura">Basura acumulada</option>
+                        <option value="luminaria">Luminaria en mal estado</option>
+                        <option value="vereda">Vereda rota</option>
+                        <option value="pluvial">Desagüe tapado / inundación</option>
+                        <option value="otro">Otro</option>
+                    </select>
 
-            <div class="form-group">
-                <label for="descripcion">Descripción del problema</label>
-                <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describí el problema con detalle..." required></textarea>
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describí el problema..." required></textarea>
+
+                    <label for="ubicacion">Ubicación</label>
+                    <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Av. San Martín 123" required>
+
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono" placeholder="Ej: 351 123 4567" required>
+
+                    <label>Foto del problema</label>
+                    <div class="photo-actions">
+                        <input type="file" id="foto" name="foto" accept="image/*" class="hidden">
+                        <button type="button" id="galeria-btn" class="btn-photo">Subir foto</button>
+                        <button type="button" id="camara-btn" class="btn-photo">Sacar con la cámara</button>
+                    </div>
+                    <div id="foto-preview" class="hidden">
+                        <img id="preview-img" alt="Vista previa de la foto">
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="btnEnviar">Enviar reporte</button>
+                </form>
+
+                <p class="assist">
+                    Tu reporte ayuda a mejorar la ciudad ❤️
+                </p>
             </div>
+        </div>
+    </div>
 
-            <div class="form-group">
-                <label for="ubicacion">Ubicación</label>
-                <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Av. San Martín 123, entre calles..." required>
-            </div>
-
-            <div class="form-group">
-                <label>Foto del problema</label>
-                <div class="photo-actions">
-                    <input type="file" id="foto" name="foto" accept="image/*" class="hidden">
-                    <button type="button" id="galeria-btn" class="btn-photo">Subir foto</button>
-                    <button type="button" id="camara-btn" class="btn-photo">Sacar con la cámara</button>
-                </div>
-                <div id="foto-preview" class="hidden">
-                    <img id="preview-img" alt="Vista previa de la foto" style="max-width:100%; height:auto; max-height:300px; object-fit:contain; border-radius:6px;">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="telefono">Número de teléfono</label>
-                <input type="tel" id="telefono" name="telefono" placeholder="Ej: 351 123 4567" required>
-            </div>
-
-            <button type="submit" class="btn-primary">Enviar reporte</button>
-
-            <a href="mapa.html" class="btn-map">Ver mapa de reportes</a>
-        </form>
-    </main>
+    <footer>
+        © 2026 ANIDE Animación y Diseño — Todos los derechos reservados
+    </footer>
 
     <script src="inicio.js"></script>
 </body>
