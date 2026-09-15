@@ -1,7 +1,9 @@
 const map = L.map('map').setView([-34.6037, -58.3816], 13);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap contributors © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 20
 }).addTo(map);
 
 const modalOverlay = document.getElementById('modal-overlay');
