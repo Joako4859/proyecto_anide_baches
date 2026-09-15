@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< Updated upstream
     <title>Reporte de Circulación — ANIDE</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="inicio.css" />
+=======
+
+    <title>Neuquén Responde - Reportar problema</title>
+
+    <link rel="stylesheet" href="s.css">
+>>>>>>> Stashed changes
 </head>
+
 <body>
+<<<<<<< Updated upstream
     <header>
         <div class="brand">
             <h1>ANIDE — Reporte de Circulación</h1>
@@ -29,6 +38,257 @@
         <div class="panel">
             <div class="panel-head">
                 <h3>Nuevo reporte</h3>
+=======
+
+    <!-- ================= HEADER ================= -->
+    <header class="page-header">
+
+        <div class="header-top">
+
+            <div class="header-brand">
+
+                <!-- Logo ANIDE -->
+                <div class="anide-logo">
+                    <div class="anide-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="anide-text">
+                        <strong>ANIDE</strong>
+                        <small>Agencia Neuquina de Innovación para el Desarrollo</small>
+                    </div>
+                </div>
+
+                <div class="brand-title">
+                    <h1>Neuquén Responde</h1>
+                    <p>Ayudanos a mejorar nuestra ciudad</p>
+                </div>
+
+            </div>
+
+
+            <div class="header-center">
+
+                <div class="date-box">
+                    <span class="date-icon">📅</span>
+                    <span id="header-date">Cargando fecha...</span>
+                </div>
+
+            </div>
+
+
+            <nav class="header-nav">
+
+                <a href="index.html" class="nav-link active">
+                    <span>📢</span>
+                    Reportar
+                </a>
+
+                <a href="mapa.html" class="nav-link">
+                    <span>🗺️</span>
+                    Ver mapa
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= CONTENIDO ================= -->
+
+    <main class="page-content">
+
+        <section class="intro">
+
+            <div class="intro-text">
+
+                <span class="welcome-tag">
+                    CIUDAD DE NEUQUÉN
+                </span>
+
+                <h2>
+                    ¿Viste un problema?
+                    <strong>Contanos.</strong>
+                </h2>
+
+                <p>
+                    Tu reporte nos ayuda a identificar problemas
+                    y mejorar los espacios públicos de la ciudad.
+                </p>
+
+            </div>
+
+            <div class="intro-decoration">
+                <div class="circle circle-one"></div>
+                <div class="circle circle-two"></div>
+                <span>🏙️</span>
+            </div>
+
+        </section>
+
+
+        <!-- ================= FORMULARIO ================= -->
+
+        <form
+            id="report-form"
+            class="report-form"
+            action="../BackEnd/registrar_reporte.php"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <!-- CABECERA FORMULARIO -->
+
+            <div class="form-header">
+
+                <div>
+                    <span class="form-number">01</span>
+
+                    <div>
+                        <h3>Nuevo reporte</h3>
+                        <p>Completá los datos del problema</p>
+                    </div>
+                </div>
+
+                <div class="progress-info">
+                    <span id="progress-text">0% completado</span>
+
+                    <div class="progress-bar">
+                        <div id="progress-fill"></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- ================= TIPO DE PROBLEMA ================= -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon">
+                        ⚠️
+                    </div>
+
+                    <div>
+                        <h4>¿Qué problema encontraste?</h4>
+                        <p>Seleccioná una categoría</p>
+                    </div>
+
+                </div>
+
+
+                <div class="problem-grid">
+
+                    <button
+                        type="button"
+                        class="problem-card"
+                        data-value="bache"
+                    >
+                        <span class="problem-icon">🕳️</span>
+                        <span class="problem-name">Bache</span>
+                        <span class="problem-description">
+                            Calles dañadas
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="problem-card"
+                        data-value="luminaria"
+                    >
+                        <span class="problem-icon">💡</span>
+                        <span class="problem-name">Luminaria</span>
+                        <span class="problem-description">
+                            Luz en mal estado
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="problem-card"
+                        data-value="vereda"
+                    >
+                        <span class="problem-icon">🚶</span>
+                        <span class="problem-name">Vereda</span>
+                        <span class="problem-description">
+                            Vereda dañada
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="problem-card"
+                        data-value="basura"
+                    >
+                        <span class="problem-icon">🗑️</span>
+                        <span class="problem-name">Basura</span>
+                        <span class="problem-description">
+                            Acumulación
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="problem-card"
+                        data-value="pluvial"
+                    >
+                        <span class="problem-icon">🌧️</span>
+                        <span class="problem-name">Desagüe</span>
+                        <span class="problem-description">
+                            Inundación o tapa
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="problem-card"
+                        data-value="otro"
+                    >
+                        <span class="problem-icon">🔧</span>
+                        <span class="problem-name">Otro</span>
+                        <span class="problem-description">
+                            Otro problema
+                        </span>
+                    </button>
+
+                </div>
+
+
+                <!-- IMPORTANTE:
+                     Se mantiene el select original
+                     para que PHP siga recibiendo
+                     tipo_problema -->
+
+                <select
+                    id="tipo"
+                    name="tipo_problema"
+                    class="hidden-select"
+                    required
+                >
+                    <option value="">Seleccionar...</option>
+                    <option value="bache">Bache</option>
+                    <option value="luminaria">Luminaria en mal estado</option>
+                    <option value="vereda">Vereda rota</option>
+                    <option value="basura">Acumulación de basura</option>
+                    <option value="pluvial">Desagüe tapado / inundación</option>
+                    <option value="otro">Otro</option>
+                </select>
+
+>>>>>>> Stashed changes
             </div>
             <div class="panel-body">
                 <form id="report-form" action="../BackEnd/registrar_reporte.php" method="POST" enctype="multipart/form-data">
@@ -44,6 +304,7 @@
                         <option value="otro">Otro</option>
                     </select>
 
+<<<<<<< Updated upstream
                     <label for="descripcion">Descripción</label>
                     <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describí el problema..." required></textarea>
 
@@ -76,7 +337,278 @@
     <footer>
         © 2026 ANIDE Animación y Diseño — Todos los derechos reservados
     </footer>
+=======
+
+            <!-- ================= DESCRIPCIÓN ================= -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon purple">
+                        ✏️
+                    </div>
+
+                    <div>
+                        <h4>Contanos qué pasó</h4>
+                        <p>Agregá todos los detalles que puedas</p>
+                    </div>
+
+                </div>
+
+
+                <div class="input-wrapper">
+
+                    <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        rows="5"
+                        maxlength="500"
+                        placeholder="Ej: Hay un bache grande en medio de la calle que dificulta el paso de los vehículos..."
+                        required
+                    ></textarea>
+
+                    <span
+                        class="character-count"
+                        id="character-count"
+                    >
+                        0 / 500
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= UBICACIÓN ================= -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon green">
+                        📍
+                    </div>
+
+                    <div>
+                        <h4>¿Dónde está?</h4>
+                        <p>Indicá la ubicación del problema</p>
+                    </div>
+
+                </div>
+
+
+                <div class="location-input">
+
+                    <span>📍</span>
+
+                    <input
+                        type="text"
+                        id="ubicacion"
+                        name="ubicacion"
+                        placeholder="Ej: Av. San Martín 123, entre calles..."
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= FOTO ================= -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon orange">
+                        📷
+                    </div>
+
+                    <div>
+                        <h4>Agregá una foto</h4>
+                        <p>Una imagen ayuda a entender mejor el problema</p>
+                    </div>
+
+                </div>
+
+
+                <div class="photo-box">
+
+                    <input
+                        type="file"
+                        id="foto"
+                        name="foto"
+                        accept="image/*"
+                        class="hidden"
+                    >
+
+
+                    <div class="photo-actions">
+
+                        <button
+                            type="button"
+                            id="galeria-btn"
+                            class="btn-photo"
+                        >
+                            <span>🖼️</span>
+                            <strong>Subir foto</strong>
+                            <small>Desde tu dispositivo</small>
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="camara-btn"
+                            class="btn-photo"
+                        >
+                            <span>📸</span>
+                            <strong>Abrir cámara</strong>
+                            <small>Sacar una foto</small>
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="foto-preview"
+                        class="photo-preview hidden"
+                    >
+
+                        <div class="preview-header">
+                            <span>Vista previa</span>
+
+                            <button
+                                type="button"
+                                id="remove-photo"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <img
+                            id="preview-img"
+                            alt="Vista previa de la foto"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= TELÉFONO ================= -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon blue">
+                        📱
+                    </div>
+
+                    <div>
+                        <h4>¿Cómo podemos contactarte?</h4>
+                        <p>Ingresá un número de teléfono</p>
+                    </div>
+
+                </div>
+
+
+                <div class="phone-input">
+
+                    <span>📱</span>
+
+                    <input
+                        type="tel"
+                        id="telefono"
+                        name="telefono"
+                        placeholder="Ej: 299 123 4567"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= BOTONES ================= -->
+
+            <div class="form-footer">
+
+                <div class="footer-message">
+
+                    <span>🔒</span>
+
+                    <p>
+                        Tus datos serán utilizados únicamente
+                        para gestionar el reporte.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-buttons">
+
+                    <a
+                        href="mapa.html"
+                        class="btn-map"
+                    >
+                        🗺️ Ver mapa
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Enviar reporte
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </main>
+>>>>>>> Stashed changes
+
+
+    <!-- ================= AUTITO ================= -->
+
+    <div class="road-animation">
+
+        <div class="road-line"></div>
+
+        <div class="road-bump"></div>
+
+        <div
+            class="little-car"
+            aria-hidden="true"
+        >
+            🚗
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div>
+            <strong>Neuquén Responde</strong>
+            <span>•</span>
+            <span>Una ciudad que mejora con tu participación</span>
+        </div>
+
+    </footer>
+
 
     <script src="inicio.js"></script>
+
 </body>
 </html>
