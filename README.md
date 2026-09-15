@@ -1,10 +1,10 @@
-# 🕳️ Reporte de Baches — Proyecto Anide
+#  Reporte de Baches — Proyecto Anide
 
 Aplicación web para que los vecinos reporten problemas en la vía pública (baches, luminarias en mal estado, veredas rotas, acumulación de basura, desagües tapados, etc.) y los visualicen en un **mapa interactivo**.
 
 Desarrollada con **HTML, CSS, JavaScript, PHP y MySQL**, pensada para correr localmente con **XAMPP**.
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 - **Formulario de reporte** (`FrontEnd/index.html`):
   - Selección del tipo de problema (bache, luminaria, vereda, basura, pluvial, otro).
@@ -25,7 +25,7 @@ Desarrollada con **HTML, CSS, JavaScript, PHP y MySQL**, pensada para correr loc
   - Los reportes se guardan en `BackEnd/reportes.json` (sin depender de la BD).
 - Cercado por ciudad: solo se permite marcar baches dentro de tu ciudad (radio de 10 km).
 
-## 🗂️ Estructura del proyecto
+##  Estructura del proyecto
 
 ```
 proyecto_anide_baches/
@@ -45,13 +45,13 @@ proyecto_anide_baches/
     └── uploads/                   # Fotos subidas (requiere permisos de escritura)
 ```
 
-## 📋 Requisitos
+##  Requisitos
 
 - [XAMPP](https://www.apachefriends.org/es/index.html) (Apache + MySQL + PHP 7.4 o superior). Compatible con **Windows**, **Linux** y **macOS**.
 - Conexión a internet para cargar los mapas (Leaflet y tiles de Esri) y el buscador de calles (Nominatim).
 - Navegador moderno (Chrome, Firefox, Edge).
 
-## 🚀 Instalación y puesta en marcha
+##  Instalación y puesta en marcha
 
 ### Paso 1 — Instalar XAMPP
 
@@ -143,7 +143,7 @@ Abrí en el navegador:
 
 ---
 
-## 🧪 Probar que todo funciona
+##  Probar que todo funciona
 
 1. Abrí `index.html` y completá el formulario con un reporte de prueba (incluyendo una foto).
 2. Deberías llegar a `gracias.php` ("¡Gracias por tu reporte!").
