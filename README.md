@@ -161,7 +161,7 @@ Abrí en el navegador:
 | **No se guardan reportes del mapa** | Verificá que `BackEnd/reportes.json` exista y tenga permisos de escritura. |
 | **El mapa se ve sin fondo** | Requiere internet (tiles de Esri y Leaflet desde CDN). |
 | **El buscador de calles no responde** | El servicio Nominatim de OpenStreetMap limita el uso intensivo; esperá unos segundos y reintentá. |
-| **Aparece `ñ` o basura al inicio de la página** | Borrá el carácter extra antes de `<!DOCTYPE html>` en `FrontEnd/index.html`. |
+| **La página muestra "Acceso denegado" o no carga el CSS** | Verificá la ruta: PHP puede necesitar `include_path` o que el archivo esté dentro de `htdocs` (los enlaces relativos `../FrontEnd` y `../BackEnd` dependen del nombre de la carpeta). |
 | **Errores de PHP visibles en pantalla** | En `BackEnd/conexion.php` se muestran errores JSON genéricos; revisá el log de Apache en `/opt/lampp/logs/error_log`. |
 
 ## 👥 Contribuciones
