@@ -70,7 +70,7 @@ function reportPopup(report) {
 }
 
 function fetchReports() {
-    return fetch('reportes.php')
+    return fetch('../BackEnd/reportes.php')
         .then(function(res) { return res.json(); });
 }
 
@@ -282,7 +282,7 @@ reportForm.addEventListener('submit', function(e) {
         date: new Date().toLocaleString('es-AR')
     };
 
-    fetch('reportes.php', {
+    fetch('../BackEnd/reportes.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(report)
