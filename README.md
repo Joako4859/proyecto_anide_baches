@@ -17,7 +17,7 @@ Desarrollada con **HTML, CSS, JavaScript, PHP y MySQL**, pensada para correr loc
   - Marcadores con colores según la gravedad del bache:
     - 🟡 **Bajo** (pequeño hueco)
     - 🟠 **Medio** (daño considerable)
-    - 🔴 **Alto** (bache peligroso)
+    - 🔴 **Alto** (Daño peligroso)
   - Reportar un bache haciendo clic en el mapa.
   - Botón **"Mi ubicación"** para geolocalizarte y marcar baches en tu zona.
   - Buscador de calles y ciudades (geocodificación de OpenStreetMap/Nominatim).
