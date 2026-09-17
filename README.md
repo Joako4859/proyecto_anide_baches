@@ -1,4 +1,4 @@
-# 🕳️ Reporte de Baches — Proyecto Anide
+#  Proyecto Anide y Defensoria del pueblo
 
 Aplicación web para que los vecinos reporten problemas en la vía pública (baches, luminarias en mal estado, veredas rotas, acumulación de basura, desagües tapados, etc.) y los visualicen en un **mapa interactivo**.
 
