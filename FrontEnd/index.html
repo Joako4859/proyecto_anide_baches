@@ -138,136 +138,135 @@
             </div>
 
 
-            <!-- ================= TIPO DE PROBLEMA ================= -->
+            <!-- ================= PASO 1: QUÉ QUERÉS REGISTRAR ================= -->
 
             <div class="form-section">
 
                 <div class="section-title">
 
                     <div class="section-icon">
-                        ⚠️
+                        🎯
                     </div>
 
                     <div>
-                        <h4>¿Qué problema encontraste?</h4>
-                        <p>Seleccioná una categoría</p>
+                        <span class="step-badge">Paso 1 de 3</span>
+                        <h4>¿Qué querés registrar?</h4>
+                        <p>Elegí el tipo de situación</p>
                     </div>
 
                 </div>
 
 
-                <div class="problem-grid">
+                <div class="opt-grid" id="color-grid">
 
-                    <button
-                        type="button"
-                        class="problem-card"
-                        data-value="bache"
-                    >
-                        <span class="problem-icon">🕳️</span>
-                        <span class="problem-name">Bache</span>
-                        <span class="problem-description">
-                            Calles dañadas
-                        </span>
+                    <button type="button" class="opt-card color-card" data-value="situacion_mejorar">
+                        <span class="color-dot dot-red"></span>
+                        <span class="opt-name">Situación para mejorar</span>
+                        <span class="opt-desc">Algo en el espacio público que se puede mejorar</span>
                     </button>
 
-
-                    <button
-                        type="button"
-                        class="problem-card"
-                        data-value="luminaria"
-                    >
-                        <span class="problem-icon">💡</span>
-                        <span class="problem-name">Luminaria</span>
-                        <span class="problem-description">
-                            Luz en mal estado
-                        </span>
+                    <button type="button" class="opt-card color-card" data-value="situacion_riesgo">
+                        <span class="color-dot dot-yellow"></span>
+                        <span class="opt-name">Situación de riesgo</span>
+                        <span class="opt-desc">Un peligro que puede causar un accidente</span>
                     </button>
 
-
-                    <button
-                        type="button"
-                        class="problem-card"
-                        data-value="vereda"
-                    >
-                        <span class="problem-icon">🚶</span>
-                        <span class="problem-name">Vereda</span>
-                        <span class="problem-description">
-                            Vereda dañada
-                        </span>
+                    <button type="button" class="opt-card color-card" data-value="experiencia_positiva">
+                        <span class="color-dot dot-green"></span>
+                        <span class="opt-name">Experiencia positiva</span>
+                        <span class="opt-desc">Algo bueno que pasó y que querés destacar</span>
                     </button>
 
-
-                    <button
-                        type="button"
-                        class="problem-card"
-                        data-value="basura"
-                    >
-                        <span class="problem-icon">🗑️</span>
-                        <span class="problem-name">Basura</span>
-                        <span class="problem-description">
-                            Acumulación
-                        </span>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="problem-card"
-                        data-value="pluvial"
-                    >
-                        <span class="problem-icon">🌧️</span>
-                        <span class="problem-name">Desagüe</span>
-                        <span class="problem-description">
-                            Inundación o tapa
-                        </span>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="problem-card"
-                        data-value="otro"
-                    >
-                        <span class="problem-icon">🔧</span>
-                        <span class="problem-name">Otro</span>
-                        <span class="problem-description">
-                            Otro problema
-                        </span>
+                    <button type="button" class="opt-card color-card" data-value="propuesta_ciudadana">
+                        <span class="color-dot dot-blue"></span>
+                        <span class="opt-name">Propuesta ciudadana</span>
+                        <span class="opt-desc">Una idea para mejorar la ciudad</span>
                     </button>
 
                 </div>
 
+            </div>
 
-                <!-- IMPORTANTE:
-                     Se mantiene el select original
-                     para que PHP siga recibiendo
-                     tipo_problema -->
 
-                <select
-                    id="tipo"
-                    name="tipo_problema"
-                    class="hidden-select"
-                    required
-                >
-                    <option value="">Seleccionar...</option>
-                    <option value="bache">Bache</option>
-                    <option value="luminaria">Luminaria en mal estado</option>
-                    <option value="vereda">Vereda rota</option>
-                    <option value="basura">Acumulación de basura</option>
-                    <option value="pluvial">Desagüe tapado / inundación</option>
-                    <option value="otro">Otro</option>
-                </select>
+            <!-- ================= PASO 2: MÉTODO DE MOVIMIENTO ================= -->
+
+            <div class="form-section reveal-section hidden" id="section-metodo">
+
+                <div class="section-title">
+
+                    <div class="section-icon purple">
+                        🚶
+                    </div>
+
+                    <div>
+                        <span class="step-badge">Paso 2 de 3</span>
+                        <h4>¿Cómo es tu método de movimiento?</h4>
+                        <p>¿Cómo te desplazás por la ciudad?</p>
+                    </div>
+
+                </div>
+
+
+                <div class="opt-grid" id="metodo-grid">
+
+                    <button type="button" class="opt-card method-card" data-value="caminando">
+                        <span class="opt-big-icon">🚶</span>
+                        <span class="opt-name">Caminando</span>
+                        <span class="opt-desc">Voy a pie por las calles</span>
+                    </button>
+
+                    <button type="button" class="opt-card method-card" data-value="bicicleta">
+                        <span class="opt-big-icon">🚲</span>
+                        <span class="opt-name">Bicicleta / monopatín</span>
+                        <span class="opt-desc">Me muevo en dos ruedas</span>
+                    </button>
+
+                    <button type="button" class="opt-card method-card" data-value="movilidad_reducida">
+                        <span class="opt-big-icon">♿</span>
+                        <span class="opt-name">Movilidad reducida</span>
+                        <span class="opt-desc">Necesito accesibilidad para circular</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= PASO 3: TIPO DE RECLAMO ================= -->
+
+            <div class="form-section reveal-section hidden" id="section-reclamo">
+
+                <div class="section-title">
+
+                    <div class="section-icon green">
+                        📋
+                    </div>
+
+                    <div>
+                        <span class="step-badge">Paso 3 de 3</span>
+                        <h4>¿Qué tipo de reclamo es?</h4>
+                        <p id="reclamo-sub">Seleccioná una opción</p>
+                    </div>
+
+                </div>
+
+
+                <div class="opt-grid" id="claim-grid">
+
+                </div>
+
+                <p class="claim-hint" id="claim-hint"></p>
 
             </div>
 
 
             <!-- ================= DESCRIPCIÓN ================= -->
 
-            <div class="form-section">
+            <div class="form-section reveal-section hidden" id="section-descripcion">
 
                 <div class="section-title">
 
-                    <div class="section-icon purple">
+                    <div class="section-icon orange">
                         ✏️
                     </div>
 
@@ -304,11 +303,11 @@
 
             <!-- ================= UBICACIÓN ================= -->
 
-            <div class="form-section">
+            <div class="form-section reveal-section hidden" id="section-ubicacion">
 
                 <div class="section-title">
 
-                    <div class="section-icon green">
+                    <div class="section-icon blue">
                         📍
                     </div>
 
@@ -339,7 +338,7 @@
 
             <!-- ================= FOTO ================= -->
 
-            <div class="form-section">
+            <div class="form-section reveal-section hidden" id="section-foto">
 
                 <div class="section-title">
 
@@ -422,7 +421,7 @@
 
             <!-- ================= TELÉFONO ================= -->
 
-            <div class="form-section">
+            <div class="form-section reveal-section hidden" id="section-telefono">
 
                 <div class="section-title">
 
@@ -457,7 +456,7 @@
 
             <!-- ================= BOTONES ================= -->
 
-            <div class="form-footer">
+            <div class="form-footer reveal-section hidden" id="section-footer">
 
                 <div class="footer-message">
 
@@ -494,24 +493,84 @@
 
             </div>
 
+
+            <!-- ================= CAMPOS OCULTOS PARA PHP ================= -->
+
+            <select id="tipo" name="tipo_problema" class="hidden-select" required>
+                <option value="">Seleccionar...</option>
+            </select>
+
+            <input type="hidden" id="color-reclamo" name="color_reclamo" value="">
+            <input type="hidden" id="metodo-movimiento" name="metodo_movimiento" value="">
+
         </form>
 
     </main>
 
 
-    <!-- ================= AUTITO ================= -->
+    <!-- ================= ESCENA URBANA ================= -->
 
-    <div class="road-animation">
+    <div class="road-animation" aria-hidden="true">
 
-        <div class="road-line"></div>
+        <div class="sky"></div>
 
-        <div class="road-bump"></div>
+        <div class="city-skyline">
+            <div class="building" style="height:38px;width:30px"></div>
+            <div class="building" style="height:64px;width:40px"></div>
+            <div class="building" style="height:50px;width:34px"></div>
+            <div class="building" style="height:78px;width:46px"></div>
+            <div class="building" style="height:42px;width:30px"></div>
+            <div class="building" style="height:58px;width:36px"></div>
+            <div class="building" style="height:34px;width:28px"></div>
+            <div class="building" style="height:70px;width:42px"></div>
+        </div>
 
-        <div
-            class="little-car"
-            aria-hidden="true"
-        >
-            🚗
+        <div class="street-lamp lamp-1">
+            <div class="lamp-head"></div>
+        </div>
+
+        <div class="street-lamp lamp-2">
+            <div class="lamp-head"></div>
+        </div>
+
+        <div class="sidewalk">
+            <div class="pedestrian ped-1">
+                <div class="ped-head"></div>
+                <div class="ped-body"></div>
+                <div class="ped-leg leg-a"></div>
+                <div class="ped-leg leg-b"></div>
+            </div>
+            <div class="pedestrian ped-2">
+                <div class="ped-head"></div>
+                <div class="ped-body"></div>
+                <div class="ped-leg leg-a"></div>
+                <div class="ped-leg leg-b"></div>
+            </div>
+        </div>
+
+        <div class="road">
+            <div class="road-line"></div>
+
+            <div class="bikeway">
+                <span class="bike-symbol">🚲</span>
+                <span class="bike-symbol">🚲</span>
+            </div>
+
+            <div class="pothole"></div>
+        </div>
+
+        <div class="cyclist">
+            <div class="bike-frame"></div>
+            <div class="bike-bar bar-rear"></div>
+            <div class="bike-bar bar-front"></div>
+            <div class="bike-seat"></div>
+            <div class="bike-handle"></div>
+            <div class="rider">
+                <div class="rider-head"></div>
+                <div class="rider-body"></div>
+            </div>
+            <div class="bike-wheel bike-wheel-front"></div>
+            <div class="bike-wheel bike-wheel-rear"></div>
         </div>
 
     </div>
