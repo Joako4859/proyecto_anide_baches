@@ -3,42 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< Updated upstream
-    <title>Reporte de Circulación — ANIDE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="inicio.css" />
-=======
-
     <title>Neuquén Responde - Reportar problema</title>
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="s.css">
->>>>>>> Stashed changes
 </head>
 
 <body>
-<<<<<<< Updated upstream
-    <header>
-        <div class="brand">
-            <h1>ANIDE — Reporte de Circulación</h1>
-            <p>Tu ciudad, tu voz</p>
-        </div>
-        <nav>
-            <a href="index.html" id="btnReportar">Reportar</a>
-            <a href="mapa.html" id="btnMapa">Mapa</a>
-            <a href="mapa.html" id="btnMisReportes">Mis reportes</a>
-        </nav>
-    </header>
-
-    <div class="layout">
-        <div class="pitch">
-            <h2>🦊 Un canal directo</h2>
-            <p>Reportá baches, semáforos apagados o problemas de tránsito. Tu reporte llega a quienes pueden resolverlo.</p>
-        </div>
-
-        <div class="panel">
-            <div class="panel-head">
-                <h3>Nuevo reporte</h3>
-=======
 
     <!-- ================= HEADER ================= -->
     <header class="page-header">
@@ -48,7 +18,7 @@
             <div class="header-brand">
 
                 <!-- Logo ANIDE -->
-                <div class="anide-logo">
+                <a href="index.html" class="anide-logo">
                     <div class="anide-dots">
                         <span></span>
                         <span></span>
@@ -62,7 +32,7 @@
                         <strong>ANIDE</strong>
                         <small>Agencia Neuquina de Innovación para el Desarrollo</small>
                     </div>
-                </div>
+                </a>
 
                 <div class="brand-title">
                     <h1>Neuquén Responde</h1>
@@ -288,56 +258,8 @@
                     <option value="otro">Otro</option>
                 </select>
 
->>>>>>> Stashed changes
             </div>
-            <div class="panel-body">
-                <form id="report-form" action="../BackEnd/registrar_reporte.php" method="POST" enctype="multipart/form-data">
-                    <label for="tipo">Tipo de problema</label>
-                    <select id="tipo" name="tipo_problema" required>
-                        <option value="">Seleccionar...</option>
-                        <option value="bache">Bache</option>
-                        <option value="semaforo">Semáforo apagado</option>
-                        <option value="basura">Basura acumulada</option>
-                        <option value="luminaria">Luminaria en mal estado</option>
-                        <option value="vereda">Vereda rota</option>
-                        <option value="pluvial">Desagüe tapado / inundación</option>
-                        <option value="otro">Otro</option>
-                    </select>
 
-<<<<<<< Updated upstream
-                    <label for="descripcion">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describí el problema..." required></textarea>
-
-                    <label for="ubicacion">Ubicación</label>
-                    <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: Av. San Martín 123" required>
-
-                    <label for="telefono">Teléfono</label>
-                    <input type="tel" id="telefono" name="telefono" placeholder="Ej: 351 123 4567" required>
-
-                    <label>Foto del problema</label>
-                    <div class="photo-actions">
-                        <input type="file" id="foto" name="foto" accept="image/*" class="hidden">
-                        <button type="button" id="galeria-btn" class="btn-photo">Subir foto</button>
-                        <button type="button" id="camara-btn" class="btn-photo">Sacar con la cámara</button>
-                    </div>
-                    <div id="foto-preview" class="hidden">
-                        <img id="preview-img" alt="Vista previa de la foto">
-                    </div>
-
-                    <button type="submit" class="submit-btn" id="btnEnviar">Enviar reporte</button>
-                </form>
-
-                <p class="assist">
-                    Tu reporte ayuda a mejorar la ciudad ❤️
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        © 2026 ANIDE Animación y Diseño — Todos los derechos reservados
-    </footer>
-=======
 
             <!-- ================= DESCRIPCIÓN ================= -->
 
@@ -561,6 +483,7 @@
 
                     <button
                         type="submit"
+                        id="btnEnviar"
                         class="btn-primary"
                     >
                         Enviar reporte
@@ -574,7 +497,6 @@
         </form>
 
     </main>
->>>>>>> Stashed changes
 
 
     <!-- ================= AUTITO ================= -->
