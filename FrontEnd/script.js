@@ -1,4 +1,4 @@
-const map = L.map('map').setView([-34.6037, -58.3816], 13);
+const map = L.map('map').setView([-38.9522, -68.0593], 13);
 
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Map data © OpenStreetMap contributors, Esri',
@@ -335,12 +335,3 @@ reportForm.addEventListener('submit', function(e) {
 });
 
 loadMarkers();
-
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        map.flyTo([lat, lng], 13);
-        reverseGeocode(lat, lng);
-    }, function() {}, { timeout: 8000 });
-}
