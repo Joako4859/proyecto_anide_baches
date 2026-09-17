@@ -6,19 +6,13 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_M
 }).addTo(map);
 
 // Animaciones para los botones del header
-const botones = ['btnReportar', 'btnMapa', 'btnMisReportes'];
-botones.forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) {
-        btn.addEventListener('click', () => {
-            btn.style.color = 'var(--accent-deep)';
-            btn.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                btn.style.color = 'var(--ink-soft)';
-                btn.style.transform = 'scale(1)';
-            }, 200);
-        });
-    }
+document.querySelectorAll('.nav-link').forEach(btn => {
+    btn.addEventListener('click', () => {
+        btn.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            btn.style.transform = 'scale(1)';
+        }, 200);
+    });
 });
 
 // Efecto visual al hacer clic en "Mi ubicación"
@@ -37,6 +31,7 @@ if (btnUbicacion) {
 const modalOverlay = document.getElementById('modal-overlay');
 const reportForm = document.getElementById('report-form');
 const cancelBtn = document.getElementById('cancel-btn');
+const modalCloseBtn = document.getElementById('modal-close-btn');
 const descriptionInput = document.getElementById('description');
 const severitySelect = document.getElementById('severity');
 
@@ -282,6 +277,14 @@ cancelBtn.addEventListener('click', function() {
     pendingLatLng = null;
     pendingPhoto = null;
 });
+
+if (modalCloseBtn) {
+    modalCloseBtn.addEventListener('click', function() {
+        modalOverlay.classList.add('hidden');
+        pendingLatLng = null;
+        pendingPhoto = null;
+    });
+}
 
 modalOverlay.addEventListener('click', function(e) {
     if (e.target === modalOverlay) {

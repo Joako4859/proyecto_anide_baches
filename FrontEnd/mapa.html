@@ -3,48 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa de Reportes — ANIDE</title>
+    <title>Neuquén Responde - Ver mapa</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="s.css">
 </head>
+
 <body>
-    <header>
-        <div class="brand">
-            <h1>ANIDE — Reporte de Circulación</h1>
-            <p>Tu ciudad, tu voz</p>
+
+    <!-- ================= HEADER ================= -->
+    <header class="page-header">
+
+        <div class="header-top">
+
+            <div class="header-brand">
+
+                <a href="index.html" class="anide-logo">
+                    <div class="anide-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="anide-text">
+                        <strong>ANIDE</strong>
+                        <small>Agencia Neuquina de Innovación para el Desarrollo</small>
+                    </div>
+                </a>
+
+                <div class="brand-title">
+                    <h1>Neuquén Responde</h1>
+                    <p>Ayudanos a mejorar nuestra ciudad</p>
+                </div>
+
+            </div>
+
+
+            <div class="header-center">
+
+                <div class="date-box">
+                    <span class="date-icon"><i class="fa-regular fa-calendar"></i></span>
+                    <span id="header-date">Cargando fecha...</span>
+                </div>
+
+            </div>
+
+
+            <nav class="header-nav">
+
+                <a href="index.html" class="nav-link">
+                    <span><i class="fa-solid fa-bullhorn"></i></span>
+                    Reportar
+                </a>
+
+                <a href="mapa.html" class="nav-link active">
+                    <span><i class="fa-solid fa-map-location-dot"></i></span>
+                    Ver mapa
+                </a>
+
+            </nav>
+
         </div>
-        <nav>
-            <a href="index.html" id="btnReportar">Reportar</a>
-            <a href="mapa.html" id="btnMapa">Mapa</a>
-            <a href="mapa.html" id="btnMisReportes">Mis reportes</a>
-        </nav>
+
     </header>
 
-    <div class="layout">
-        <h2>🦊 Mapa de reportes</h2>
-        <p class="intro">
-            Explorá los reportes enviados por los vecinos y encontrá los puntos donde se registraron problemas de tránsito o mantenimiento.
-        </p>
 
-        <div class="search-bar">
-            <div class="search-wrap">
-                <input type="text" id="search-input" placeholder="Buscar calle o ciudad..." autocomplete="off">
-                <div id="search-results"></div>
+    <!-- ================= CONTENIDO ================= -->
+
+    <main class="page-content map-page">
+
+        <section class="intro">
+
+            <div class="intro-text">
+
+                <span class="welcome-tag">
+                    MAPA INTERACTIVO
+                </span>
+
+                <h2>
+                    Explorá los reportes
+                    <strong>de tu ciudad</strong>
+                </h2>
+
+                <p>
+                    Buscá una calle o encontrá los puntos donde los vecinos
+                    registraron problemas de tránsito o mantenimiento.
+                </p>
+
             </div>
-            <button id="btnUbicacion">Mi ubicación</button>
+
+        </section>
+
+
+        <div class="map-toolbar">
+
+            <div class="search-bar">
+                <div class="search-wrap">
+                    <input type="text" id="search-input" placeholder="Buscar calle o ciudad..." autocomplete="off">
+                    <div id="search-results"></div>
+                </div>
+                <button id="btnUbicacion" class="btn-locate">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    Mi ubicación
+                </button>
+            </div>
+
+            <div class="status-bar hidden" id="status-bar"></div>
+
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+
         </div>
 
-        <div class="status-bar hidden" id="status-bar"></div>
+    </main>
 
-        <div class="map-container">
-            <div id="map"></div>
-        </div>
-    </div>
+
+    <!-- ================= MODAL ================= -->
 
     <div id="modal-overlay" class="hidden">
         <div id="modal">
-            <h2>Reportar Bache</h2>
+            <div class="modal-header">
+                <h2>Reportar Bache</h2>
+                <button type="button" id="modal-close-btn" class="modal-close">✕</button>
+            </div>
+
             <form id="report-form">
                 <label for="description">Descripción del problema:</label>
                 <textarea id="description" rows="3" placeholder="Ej: Bache grande frente al hospital..." required></textarea>
@@ -60,8 +147,12 @@
                 <label for="photo">Foto del bache:</label>
                 <div class="photo-buttons">
                     <input type="file" id="photo" accept="image/*" class="hidden">
-                    <button type="button" id="gallery-btn" class="btn-photo">Subir de la galería</button>
-                    <button type="button" id="camera-btn" class="btn-photo">Abrir cámara</button>
+                    <button type="button" id="gallery-btn" class="btn-photo-fill">
+                        <i class="fa-solid fa-image"></i> Galería
+                    </button>
+                    <button type="button" id="camera-btn" class="btn-photo-fill">
+                        <i class="fa-solid fa-camera-retro"></i> Cámara
+                    </button>
                 </div>
                 <div id="photo-preview" class="hidden"><img id="preview-img" alt="Vista previa"></div>
 
@@ -73,9 +164,19 @@
         </div>
     </div>
 
+
+    <!-- FOOTER -->
+
     <footer>
-        © 2026 ANIDE Animación y Diseño — Todos los derechos reservados
+
+        <div>
+            <strong>Neuquén Responde</strong>
+            <span>•</span>
+            <span>Una ciudad que mejora con tu participación</span>
+        </div>
+
     </footer>
+
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
