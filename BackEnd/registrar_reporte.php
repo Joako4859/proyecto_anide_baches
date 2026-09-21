@@ -20,10 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fotoUrl = $rutaDestino;
     }
 
+try {
     $stmt = $pdo->prepare("INSERT INTO reportes (tipo_problema, categoria, metodo_movimiento, descripcion, ubicacion, lat, lng, foto_url, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$tipo, $categoria, $metodoMovimiento, $descripcion, $ubicacion, $lat, $lng, $fotoUrl, $telefono]);
-
-    header('Location: gracias.php');
+} catch (PDOException $e) {
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['error' => 'No se pudo guardar el reporte. Verificá que la tabla reportes tenga las columnas lat y lng.']);
     exit;
+}
+
+header('Location: gracias.php');
+exit;
+} else {
+    http_response_code(405);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['error' => 'Método no permitido.']);
 }
 ?>

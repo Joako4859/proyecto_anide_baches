@@ -310,8 +310,11 @@ function setUbicacionStatus(texto, tipo) {
     }
 }
 
-function geocodificarTexto(direccion) {
-    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(direccion) + '&limit=1&accept-language=es')
+function geocodificarTexto(direccion, limiteMs) {
+    const limite = limiteMs || 6000;
+    const controlador = new AbortController();
+    const temporizador = setTimeout(() => controlador.abort(), limite);
+    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(direccion) + '&limit=1&accept-language=es', { signal: controlador.signal })
         .then(function(res) { return res.json(); })
         .then(function(data) {
             if (data && data[0]) {
@@ -319,7 +322,8 @@ function geocodificarTexto(direccion) {
             }
             return null;
         })
-        .catch(function() { return null; });
+        .catch(function() { return null; })
+        .finally(function() { clearTimeout(temporizador); });
 }
 
 if (usarUbicacionBtn) {
@@ -333,12 +337,13 @@ if (usarUbicacionBtn) {
             (position) => {
                 latInput.value = position.coords.latitude;
                 lngInput.value = position.coords.longitude;
-                setUbicacionStatus('✓ Ubicación detectada', 'ok');
-                fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&accept-language=es&zoom=18')
+                const metros = Math.round(position.coords.accuracy || 0);
+                setUbicacionStatus('✓ Ubicación detectada' + (metros ? ' (precisión ±' + metros + 'm)' : ''), 'ok');
+                fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&accept-language=es&zoom=18', { signal: AbortSignal.timeout(6000) })
                     .then(function(res) { return res.json(); })
                     .then(function(data) {
                         if (data && data.display_name && ubicacionInput) {
-                            ubicacionInput.value = data.display_name;
+                            ubicacionInput.value = data.display_name.slice(0, 150);
                             revealSection(sectionTelefono);
                             updateProgress();
                         }
@@ -347,7 +352,8 @@ if (usarUbicacionBtn) {
             },
             () => {
                 setUbicacionStatus('No se pudo obtener la ubicación. Revisá los permisos.', 'err');
-            }
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
         );
     });
 }
@@ -358,35 +364,32 @@ if (reportForm) {
 
         e.preventDefault();
         const direccion = (ubicacionInput && ubicacionInput.value.trim()) || '';
-        let promesa;
-        if (direccion) {
-            promesa = geocodificarTexto(direccion).then(function(coords) {
+
+        if (!direccion) {
+            reportForm.submit();
+            return;
+        }
+
+        let enviado = false;
+        const enviar = function() {
+            if (enviado) return;
+            enviado = true;
+            reportForm.submit();
+        };
+
+        const redDeSeguridad = setTimeout(enviar, 8000);
+        geocodificarTexto(direccion, 6000)
+            .then(function(coords) {
                 if (coords) {
                     latInput.value = coords.lat;
                     lngInput.value = coords.lng;
-                    return true;
                 }
-                return false;
+            })
+            .catch(function() {})
+            .finally(function() {
+                clearTimeout(redDeSeguridad);
+                enviar();
             });
-        } else {
-            promesa = Promise.resolve(false);
-        }
-
-        const guardarConCoordenadas = function(teniaGPS) {
-            if (teniaGPS || !navigator.geolocation) {
-                reportForm.submit();
-                return;
-            }
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    latInput.value = position.coords.latitude;
-                    lngInput.value = position.coords.longitude;
-                    reportForm.submit();
-                },
-                () => { reportForm.submit(); }
-            );
-        };
-        promesa.then(guardarConCoordenadas);
     });
 }
 
