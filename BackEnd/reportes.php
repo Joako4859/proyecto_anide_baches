@@ -1,8 +1,9 @@
 <?php
 // reportes.php
-// La unica logica de datos de la app: leer y guardar reportes en reportes.json
-// GET  -> devuelve todos los reportes como JSON
-// POST -> guarda un reporte nuevo
+// GET  -> devuelve todos los reportes (JSON del mapa + MySQL del formulario)
+// POST -> guarda un reporte nuevo (sistema del mapa, JSON)
+
+require 'conexion.php';
 
 const ARCHIVO_REPORTES = __DIR__ . '/reportes.json';
 
@@ -21,11 +22,47 @@ function guardarReportes(array $reportes): void
     file_put_contents(ARCHIVO_REPORTES, json_encode($reportes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
 }
 
+function cargarReportesBaseDeDatos(): array
+{
+    global $pdo;
+    $reportes = [];
+    try {
+        $stmt = $pdo->query("SELECT * FROM reportes WHERE lat IS NOT NULL AND lng IS NOT NULL ORDER BY id DESC");
+        foreach ($stmt as $fila) {
+            $foto = null;
+            if (!empty($fila['foto_url'])) {
+                $foto = '../BackEnd/' . ltrim($fila['foto_url'], '/');
+            }
+            $reportes[] = [
+                'lat' => (float) $fila['lat'],
+                'lng' => (float) $fila['lng'],
+                'description' => $fila['descripcion'],
+                'ubicacion' => $fila['ubicacion'],
+                'tipo' => $fila['tipo_problema'],
+                'categoria' => $fila['categoria'],
+                'metodo' => $fila['metodo_movimiento'],
+                'severity' => null,
+                'photo' => $foto,
+                'date' => isset($fila['fecha_creacion']) ? date('d/m/Y H:i', strtotime($fila['fecha_creacion'])) : null,
+                'source' => 'form'
+            ];
+        }
+    } catch (PDOException $e) {
+        // Si no hay tabla o conexión, devolver vacío sin romper el mapa
+        return [];
+    }
+    return $reportes;
+}
+
 $metodo = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($metodo === 'GET') {
+    $reportes = cargarReportesBaseDeDatos();
+    foreach (cargarReportes() as $r) {
+        $reportes[] = $r;
+    }
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(cargarReportes(), JSON_UNESCAPED_UNICODE);
+    echo json_encode($reportes, JSON_UNESCAPED_UNICODE);
     exit;
 }
 

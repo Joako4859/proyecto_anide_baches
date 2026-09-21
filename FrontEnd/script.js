@@ -88,15 +88,57 @@ if (photoInput) {
     });
 }
 
+const categoriaLabels = {
+    situacion_mejorar: 'Situación para mejorar',
+    situacion_riesgo: 'Situación de riesgo',
+    experiencia_positiva: 'Experiencia positiva',
+    propuesta_ciudadana: 'Propuesta ciudadana'
+};
+
+const tipoLabels = {
+    vereda_rota: 'Vereda rota',
+    cruce_peligroso: 'Cruce peligroso',
+    mala_luz: 'Mala iluminación',
+    basura: 'Basura acumulada',
+    senial_peatonal: 'Señalización peatonal',
+    obstaculo: 'Obstáculos en la vereda',
+    bache: 'Bache en la calzada',
+    ciclovia_mal: 'Ciclovía en mal estado',
+    falta_bicicletero: 'Falta de bicicleteros',
+    senial_ciclista: 'Señalización ciclista',
+    ripio_escombros: 'Ripio o escombros',
+    poco_espacio: 'Poco espacio para circular',
+    falta_rampa: 'Falta de rampa',
+    rampa_mal: 'Rampa en mal estado',
+    vereda_obstaculos: 'Vereda con obstáculos',
+    cruce_sin_desnivel: 'Cruce sin desnivel accesible',
+    semaforo_sonoro: 'Semáforo sin señal sonora',
+    transporte_inaccesible: 'Transporte sin accesibilidad'
+};
+
 function reportPopup(report) {
     const photoHtml = report.photo
         ? `<img src="${report.photo}" class="latest-photo" onclick="window.open('${report.photo}','_blank')">`
         : '<em>Sin foto</em>';
+
+    let titulo;
+    if (report.severity) {
+        titulo = 'Bache - ' + report.severity.toUpperCase();
+    } else {
+        const cat = categoriaLabels[report.categoria] || '';
+        const tipo = tipoLabels[report.tipo] || report.tipo || '';
+        titulo = [cat, tipo].filter(Boolean).join(' - ') || 'Reporte';
+    }
+
+    const ubicacionHtml = report.ubicacion
+        ? `<br><small>📍 ${report.ubicacion}</small>`
+        : '';
+
     return `
-        <strong>Bache - ${report.severity.toUpperCase()}</strong><br>
+        <strong>${titulo}</strong><br>
         ${photoHtml}
-        ${report.description}<br>
-        <small>${report.date}</small>
+        ${report.description}${ubicacionHtml}<br>
+        <small>${report.date || ''}</small>
     `;
 }
 

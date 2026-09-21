@@ -53,7 +53,7 @@ const sectionFooter = document.getElementById('section-footer');
 const reclamoSub = document.getElementById('reclamo-sub');
 const claimHint = document.getElementById('claim-hint');
 
-const colorReclamoInput = document.getElementById('color-reclamo');
+const categoriaInput = document.getElementById('categoria');
 const metodoMovimientoInput = document.getElementById('metodo-movimiento');
 const tipoSelect = document.getElementById('tipo');
 
@@ -82,6 +82,15 @@ function hideSection(el) {
     }
 }
 
+function revealSection(el) {
+    if (!el) return;
+    const estabaOculta = el.classList.contains('hidden');
+    showSection(el);
+    if (estabaOculta) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
 function marcarSeleccion(cards, card) {
     cards.forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
@@ -89,7 +98,7 @@ function marcarSeleccion(cards, card) {
 
 // ================= PASO 1: COLOR =================
 
-let colorSeleccionado = null;
+let categoriaSeleccionada = null;
 let metodoSeleccionado = null;
 let reclamoSeleccionado = null;
 
@@ -98,8 +107,8 @@ const colorCards = Array.from(colorGrid.querySelectorAll('.color-card'));
 colorCards.forEach(card => {
     card.addEventListener('click', () => {
         marcarSeleccion(colorCards, card);
-        colorSeleccionado = card.dataset.value;
-        colorReclamoInput.value = card.dataset.value;
+        categoriaSeleccionada = card.dataset.value;
+        categoriaInput.value = card.dataset.value;
 
         // Reset de los pasos siguientes
         metodoSeleccionado = null;
@@ -115,8 +124,7 @@ colorCards.forEach(card => {
         hideSection(sectionFooter);
         metodoGrid.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
 
-        showSection(sectionMetodo);
-        sectionMetodo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        revealSection(sectionMetodo);
         updateProgress();
     });
 });
@@ -155,11 +163,11 @@ methodCards.forEach(card => {
                 <span class="opt-desc">${claim.desc}</span>
             `;
             btn.addEventListener('click', () => {
-                marcarSeleccion(claimGrid.children, btn);
+                marcarSeleccion(Array.from(claimGrid.children), btn);
                 reclamoSeleccionado = claim.value;
                 tipoSelect.value = claim.value;
                 claimHint.style.display = 'none';
-                showSection(sectionDescripcion);
+                revealSection(sectionDescripcion);
                 updateProgress();
             });
             claimGrid.appendChild(btn);
@@ -170,7 +178,7 @@ methodCards.forEach(card => {
             const nombreMetodo = card.querySelector('.opt-name').textContent;
             reclamoSub.textContent = `Opciones para: ${nombreMetodo}`;
         }
-        sectionReclamo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        revealSection(sectionReclamo);
         updateProgress();
     });
 });
@@ -183,8 +191,7 @@ if (descripcionInput) {
             characterCount.textContent = `${descripcionInput.value.length} / 500`;
         }
         if (descripcionInput.value.trim()) {
-            showSection(sectionUbicacion);
-            sectionUbicacion.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            revealSection(sectionUbicacion);
         }
         updateProgress();
     });
@@ -193,8 +200,7 @@ if (descripcionInput) {
 if (ubicacionInput) {
     ubicacionInput.addEventListener('input', () => {
         if (ubicacionInput.value.trim()) {
-            showSection(sectionTelefono);
-            sectionTelefono.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            revealSection(sectionTelefono);
         }
         updateProgress();
     });
@@ -203,8 +209,7 @@ if (ubicacionInput) {
 if (telefonoInput) {
     telefonoInput.addEventListener('input', () => {
         if (telefonoInput.value.trim()) {
-            showSection(sectionFoto);
-            sectionFoto.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            revealSection(sectionFoto);
         }
         updateProgress();
     });
@@ -215,7 +220,7 @@ if (telefonoInput) {
 function updateProgress() {
     let completado = 0;
     const total = 6;
-    if (colorSeleccionado) completado++;
+    if (categoriaSeleccionada) completado++;
     if (metodoSeleccionado) completado++;
     if (reclamoSeleccionado) completado++;
     if (descripcionInput && descripcionInput.value.trim()) completado++;
@@ -287,6 +292,101 @@ if (removePhoto) {
         if (fotoInput) fotoInput.value = '';
         clearPreview();
         updateProgress();
+    });
+}
+
+// ================= UBICACIÓN / GEOLOCALIZACIÓN =================
+
+const reportForm = document.getElementById('report-form');
+const latInput = document.getElementById('lat');
+const lngInput = document.getElementById('lng');
+const usarUbicacionBtn = document.getElementById('usar-ubicacion-btn');
+const ubicacionStatus = document.getElementById('ubicacion-status');
+
+function setUbicacionStatus(texto, tipo) {
+    if (ubicacionStatus) {
+        ubicacionStatus.textContent = texto;
+        ubicacionStatus.className = 'ubicacion-status' + (tipo ? ' ' + tipo : '');
+    }
+}
+
+function geocodificarTexto(direccion) {
+    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(direccion) + '&limit=1&accept-language=es')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data && data[0]) {
+                return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+            }
+            return null;
+        })
+        .catch(function() { return null; });
+}
+
+if (usarUbicacionBtn) {
+    usarUbicacionBtn.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            setUbicacionStatus('Tu navegador no soporta geolocalización.', 'err');
+            return;
+        }
+        setUbicacionStatus('Buscando tu ubicación...');
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                latInput.value = position.coords.latitude;
+                lngInput.value = position.coords.longitude;
+                setUbicacionStatus('✓ Ubicación detectada', 'ok');
+                fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&accept-language=es&zoom=18')
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        if (data && data.display_name && ubicacionInput) {
+                            ubicacionInput.value = data.display_name;
+                            revealSection(sectionTelefono);
+                            updateProgress();
+                        }
+                    })
+                    .catch(function() {});
+            },
+            () => {
+                setUbicacionStatus('No se pudo obtener la ubicación. Revisá los permisos.', 'err');
+            }
+        );
+    });
+}
+
+if (reportForm) {
+    reportForm.addEventListener('submit', (e) => {
+        if (latInput && latInput.value && lngInput && lngInput.value) return;
+
+        e.preventDefault();
+        const direccion = (ubicacionInput && ubicacionInput.value.trim()) || '';
+        let promesa;
+        if (direccion) {
+            promesa = geocodificarTexto(direccion).then(function(coords) {
+                if (coords) {
+                    latInput.value = coords.lat;
+                    lngInput.value = coords.lng;
+                    return true;
+                }
+                return false;
+            });
+        } else {
+            promesa = Promise.resolve(false);
+        }
+
+        const guardarConCoordenadas = function(teniaGPS) {
+            if (teniaGPS || !navigator.geolocation) {
+                reportForm.submit();
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    latInput.value = position.coords.latitude;
+                    lngInput.value = position.coords.longitude;
+                    reportForm.submit();
+                },
+                () => { reportForm.submit(); }
+            );
+        };
+        promesa.then(guardarConCoordenadas);
     });
 }
 
