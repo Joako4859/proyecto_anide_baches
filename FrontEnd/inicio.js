@@ -392,35 +392,38 @@ const btnEnviar = document.getElementById('btnEnviar');
 
 if (reportForm) {
     reportForm.addEventListener('submit', (e) => {
-        if (tipoSelect && !tipoSelect.value) {
-            e.preventDefault();
-            showSection(sectionReclamo);
-            sectionReclamo.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            if (claimHint) {
-                claimHint.textContent = 'Falta elegir el tipo de reclamo en el paso 3.';
-                claimHint.style.display = 'block';
-            }
+        const faltantes = [];
+        if (!reclamoSeleccionado) {
+            faltantes.push({ seccion: sectionReclamo, campo: null, msj: 'Falta elegir el tipo de reclamo en el paso 3.' });
+        }
+        if (!descripcionInput || !descripcionInput.value.trim()) {
+            faltantes.push({ seccion: sectionDescripcion, campo: descripcionInput, msj: 'Falta escribir una descripción breve.' });
+        }
+        if (!ubicacionInput || !ubicacionInput.value.trim()) {
+            faltantes.push({ seccion: sectionUbicacion, campo: ubicacionInput, msj: 'Falta indicar la ubicación.' });
+        }
+        if (!telefonoInput || !telefonoInput.value.trim()) {
+            faltantes.push({ seccion: sectionTelefono, campo: telefonoInput, msj: 'Falta ingresar un teléfono de contacto.' });
+        }
+
+        if (faltantes.length === 0) return;
+
+        e.preventDefault();
+        const primero = faltantes[0];
+        showSection(primero.seccion);
+        primero.seccion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        if (primero.campo) {
+            setTimeout(() => { if (primero.campo) primero.campo.focus(); }, 400);
+        } else if (claimHint && primero.seccion === sectionReclamo) {
+            claimHint.textContent = primero.msj;
+            claimHint.style.display = 'block';
         }
     });
 }
 
 if (btnEnviar) {
     btnEnviar.addEventListener('click', () => {
-        if (reportForm && !reportForm.checkValidity()) {
-            const pasos = [
-                { campo: descripcionInput, seccion: sectionDescripcion },
-                { campo: ubicacionInput,   seccion: sectionUbicacion },
-                { campo: telefonoInput,    seccion: sectionTelefono }
-            ];
-            for (const paso of pasos) {
-                if (paso.campo && !paso.campo.checkValidity()) {
-                    showSection(paso.seccion);
-                    paso.seccion.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(() => { if (paso.campo) paso.campo.focus(); }, 400);
-                    return;
-                }
-            }
-        }
         btnEnviar.style.transform = 'scale(0.95)';
         btnEnviar.style.backgroundColor = '#D35400';
         setTimeout(() => {
