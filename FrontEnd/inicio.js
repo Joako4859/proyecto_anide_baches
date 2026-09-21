@@ -297,7 +297,6 @@ if (removePhoto) {
 
 // ================= UBICACIÓN / GEOLOCALIZACIÓN =================
 
-const reportForm = document.getElementById('report-form');
 const latInput = document.getElementById('lat');
 const lngInput = document.getElementById('lng');
 const usarUbicacionBtn = document.getElementById('usar-ubicacion-btn');
@@ -335,61 +334,54 @@ if (usarUbicacionBtn) {
         setUbicacionStatus('Buscando tu ubicación...');
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                latInput.value = position.coords.latitude;
-                lngInput.value = position.coords.longitude;
                 const metros = Math.round(position.coords.accuracy || 0);
-                setUbicacionStatus('✓ Ubicación detectada' + (metros ? ' (precisión ±' + metros + 'm)' : ''), 'ok');
-                fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&accept-language=es&zoom=18', { signal: AbortSignal.timeout(6000) })
-                    .then(function(res) { return res.json(); })
-                    .then(function(data) {
-                        if (data && data.display_name && ubicacionInput) {
-                            ubicacionInput.value = data.display_name.slice(0, 150);
-                            revealSection(sectionTelefono);
-                            updateProgress();
-                        }
-                    })
-                    .catch(function() {});
+                if (metros <= 100) {
+                    latInput.value = position.coords.latitude;
+                    lngInput.value = position.coords.longitude;
+                    setUbicacionStatus('✓ Ubicación detectada (precisión ±' + metros + 'm)', 'ok');
+                    const controlador = new AbortController();
+                    setTimeout(() => controlador.abort(), 6000);
+                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&accept-language=es&zoom=16', { signal: controlador.signal })
+                        .then(function(res) { return res.json(); })
+                        .then(function(data) {
+                            if (data && data.display_name && ubicacionInput) {
+                                ubicacionInput.value = data.display_name.slice(0, 150);
+                                revealSection(sectionTelefono);
+                                updateProgress();
+                            }
+                        })
+                        .catch(function() {});
+                } else {
+                    setUbicacionStatus('⚠ Precisión muy baja (±' + metros + 'm). Escribí la dirección y se ubica sola.', 'err');
+                }
             },
-            () => {
-                setUbicacionStatus('No se pudo obtener la ubicación. Revisá los permisos.', 'err');
+            (err) => {
+                let mensaje = 'No se pudo obtener la ubicación. Revisá los permisos.';
+                if (err && err.code === 2) mensaje = 'No se pudo determinar la ubicación. Escribí la dirección manualmente.';
+                if (err && err.code === 3) mensaje = 'Tardó demasiado. Escribí la dirección manualmente.';
+                setUbicacionStatus(mensaje, 'err');
             },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
         );
     });
 }
 
-if (reportForm) {
-    reportForm.addEventListener('submit', (e) => {
-        if (latInput && latInput.value && lngInput && lngInput.value) return;
+let temporizadorGeocode = null;
 
-        e.preventDefault();
-        const direccion = (ubicacionInput && ubicacionInput.value.trim()) || '';
-
-        if (!direccion) {
-            reportForm.submit();
-            return;
-        }
-
-        let enviado = false;
-        const enviar = function() {
-            if (enviado) return;
-            enviado = true;
-            reportForm.submit();
-        };
-
-        const redDeSeguridad = setTimeout(enviar, 8000);
-        geocodificarTexto(direccion, 6000)
-            .then(function(coords) {
+if (ubicacionInput) {
+    ubicacionInput.addEventListener('input', () => {
+        clearTimeout(temporizadorGeocode);
+        const direccion = ubicacionInput.value.trim();
+        if (direccion.length < 4) return;
+        temporizadorGeocode = setTimeout(() => {
+            geocodificarTexto(direccion, 6000).then(function(coords) {
                 if (coords) {
                     latInput.value = coords.lat;
                     lngInput.value = coords.lng;
+                    setUbicacionStatus('✓ Dirección ubicada', 'ok');
                 }
-            })
-            .catch(function() {})
-            .finally(function() {
-                clearTimeout(redDeSeguridad);
-                enviar();
             });
+        }, 700);
     });
 }
 
