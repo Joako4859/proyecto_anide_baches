@@ -301,6 +301,10 @@ const latInput = document.getElementById('lat');
 const lngInput = document.getElementById('lng');
 const usarUbicacionBtn = document.getElementById('usar-ubicacion-btn');
 const ubicacionStatus = document.getElementById('ubicacion-status');
+const formMap = document.getElementById('form-map');
+
+let locationMap = null;
+let locationMarker = null;
 
 function setUbicacionStatus(texto, tipo) {
     if (ubicacionStatus) {
@@ -309,11 +313,79 @@ function setUbicacionStatus(texto, tipo) {
     }
 }
 
+// Centro por defecto: Neuquén capital
+const DEFAULT_CENTER = [-38.9516, -68.0591];
+
+function ensureLocationMap() {
+    if (locationMap || !formMap) return;
+    formMap.classList.add('active');
+    locationMap = L.map('form-map', { scrollWheelZoom: false }).setView(DEFAULT_CENTER, 13);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Map data © OpenStreetMap contributors, Esri',
+        maxZoom: 19
+    }).addTo(locationMap);
+
+    locationMarker = L.marker(DEFAULT_CENTER, { draggable: true, icon: createFormIcon() }).addTo(locationMap);
+
+    locationMarker.on('dragend', function() {
+        const pos = locationMarker.getLatLng();
+        latInput.value = pos.lat;
+        lngInput.value = pos.lng;
+        reverseGeocodeForm(pos.lat, pos.lng);
+        updateProgress();
+    });
+
+    locationMap.on('click', function(e) {
+        locationMarker.setLatLng(e.latlng);
+        latInput.value = e.latlng.lat;
+        lngInput.value = e.latlng.lng;
+        reverseGeocodeForm(e.latlng.lat, e.latlng.lng);
+        updateProgress();
+    });
+
+    setTimeout(() => { if (locationMap) locationMap.invalidateSize(); }, 200);
+}
+
+function createFormIcon() {
+    return L.divIcon({
+        className: 'form-pin-wrap',
+        html: '<span class="form-pin-ico"><i>📍</i></span>',
+        iconSize: [36, 40],
+        iconAnchor: [18, 38],
+        popupAnchor: [0, -36]
+    });
+}
+
+function setMapPosition(lat, lng, zoom) {
+    ensureLocationMap();
+    if (!locationMap || !locationMarker) return;
+    locationMap.setView([lat, lng], zoom || 16);
+    locationMarker.setLatLng([lat, lng]);
+}
+
+function reverseGeocodeForm(lat, lng) {
+    const controlador = new AbortController();
+    setTimeout(() => controlador.abort(), 6000);
+    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&accept-language=es&zoom=18', { signal: controlador.signal })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data && data.display_name && ubicacionInput) {
+                const partes = data.display_name.split(',');
+                const corto = partes.slice(0, 3).join(',').trim();
+                ubicacionInput.value = corto.slice(0, 150);
+                setUbicacionStatus('✓ Ubicación ajustada', 'ok');
+                revealSection(sectionTelefono);
+                updateProgress();
+            }
+        })
+        .catch(function() {});
+}
+
 function geocodificarTexto(direccion, limiteMs) {
     const limite = limiteMs || 6000;
     const controlador = new AbortController();
     const temporizador = setTimeout(() => controlador.abort(), limite);
-    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(direccion) + '&limit=1&accept-language=es', { signal: controlador.signal })
+    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(direccion) + '&limit=1&accept-language=es&countrycodes=ar', { signal: controlador.signal })
         .then(function(res) { return res.json(); })
         .then(function(data) {
             if (data && data[0]) {
@@ -331,35 +403,27 @@ if (usarUbicacionBtn) {
             setUbicacionStatus('Tu navegador no soporta geolocalización.', 'err');
             return;
         }
+        ensureLocationMap();
         setUbicacionStatus('Buscando tu ubicación...');
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const metros = Math.round(position.coords.accuracy || 0);
-                if (metros <= 100) {
-                    latInput.value = position.coords.latitude;
-                    lngInput.value = position.coords.longitude;
-                    setUbicacionStatus('✓ Ubicación detectada (precisión ±' + metros + 'm)', 'ok');
-                    const controlador = new AbortController();
-                    setTimeout(() => controlador.abort(), 6000);
-                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + position.coords.latitude + '&lon=' + position.coords.longitude + '&accept-language=es&zoom=16', { signal: controlador.signal })
-                        .then(function(res) { return res.json(); })
-                        .then(function(data) {
-                            if (data && data.display_name && ubicacionInput) {
-                                ubicacionInput.value = data.display_name.slice(0, 150);
-                                revealSection(sectionTelefono);
-                                updateProgress();
-                            }
-                        })
-                        .catch(function() {});
-                } else {
-                    setUbicacionStatus('⚠ Precisión muy baja (±' + metros + 'm). Escribí la dirección y se ubica sola.', 'err');
-                }
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const metros = Math.round((position.coords.accuracy * 0.5) || 0);
+                latInput.value = lat;
+                lngInput.value = lng;
+                setMapPosition(lat, lng, 17);
+                setUbicacionStatus('✓ Ubicación detectada (±' + metros + 'm). Arrastrá el pin si querés precisar.', 'ok');
+                reverseGeocodeForm(lat, lng);
+                revealSection(sectionTelefono);
+                updateProgress();
             },
             (err) => {
                 let mensaje = 'No se pudo obtener la ubicación. Revisá los permisos.';
                 if (err && err.code === 2) mensaje = 'No se pudo determinar la ubicación. Escribí la dirección manualmente.';
                 if (err && err.code === 3) mensaje = 'Tardó demasiado. Escribí la dirección manualmente.';
                 setUbicacionStatus(mensaje, 'err');
+                ensureLocationMap();
             },
             { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
         );
@@ -378,7 +442,8 @@ if (ubicacionInput) {
                 if (coords) {
                     latInput.value = coords.lat;
                     lngInput.value = coords.lng;
-                    setUbicacionStatus('✓ Dirección ubicada', 'ok');
+                    setMapPosition(coords.lat, coords.lng, 16);
+                    setUbicacionStatus('✓ Dirección ubicada. Podés arrastrar el pin para confirmar.', 'ok');
                 }
             });
         }, 700);

@@ -586,6 +586,60 @@ textarea {
     color: var(--red);
 }
 
+.location-map {
+    display: none;
+    width: 100%;
+    height: 260px;
+    margin-top: 14px;
+    border-radius: 12px;
+    border: 2px solid var(--line);
+    overflow: hidden;
+    z-index: 0;
+}
+
+.location-map.active {
+    display: block;
+}
+
+.map-hint {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.form-pin-wrap {
+    background: transparent;
+    border: none;
+}
+
+.form-pin-ico {
+    position: relative;
+    width: 36px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-pin-ico i {
+    font-style: normal;
+    font-size: 30px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.4)) drop-shadow(0 1px 1px rgba(255, 255, 255, 0.9));
+}
+
+.form-pin-ico::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 50%;
+}
+
 /* Fotos */
 
 .photo-box {
@@ -869,7 +923,8 @@ textarea {
 .bike-rider {
     position: absolute;
     bottom: 6px;
-    left: -60px;
+    right: -60px;
+    left: auto;
     font-size: 30px;
     line-height: 1;
     filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.35));
@@ -877,13 +932,13 @@ textarea {
 }
 
 @keyframes lane-move {
-    from { background-position: 0 0; }
-    to   { background-position: -76px 0; }
+    from { background-position: -76px 0; }
+    to   { background-position: 0 0; }
 }
 
 @keyframes bike-cross {
-    0%   { left: -60px; }
-    100% { left: 105%; }
+    0%   { right: -60px; }
+    100% { right: 105%; }
 }
 
 /* ================= MAPA ================= */
