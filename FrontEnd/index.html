@@ -18,25 +18,8 @@
 
             <div class="header-brand">
 
-                <!-- Logo ANIDE -->
-                <a href="index.html" class="anide-logo">
-                    <div class="anide-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-
-                    <div class="anide-text">
-                        <strong>ANIDE</strong>
-                        <small>Agencia Neuquina de Innovación para el Desarrollo</small>
-                    </div>
-                </a>
-
                 <div class="brand-title">
-                    <h1>Neuquén Responde</h1>
+                    <h1>Neuquén <span>Responde</span></h1>
                     <p>Ayudanos a mejorar nuestra ciudad</p>
                 </div>
 
@@ -47,7 +30,13 @@
 
                 <div class="date-box">
                     <span class="date-icon">📅</span>
-                    <span id="header-date">Cargando fecha...</span>
+                    <span id="header-date"></span>
+                    <script>
+                        (function () {
+                            var t = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                            document.getElementById('header-date').textContent = t.charAt(0).toUpperCase() + t.slice(1);
+                        })();
+                    </script>
                 </div>
 
             </div>
@@ -76,7 +65,7 @@
 
     <main class="page-content">
 
-        <section class="intro">
+        <section class="intro intro-center">
 
             <div class="intro-text">
 
@@ -94,12 +83,6 @@
                     y mejorar los espacios públicos de la ciudad.
                 </p>
 
-            </div>
-
-            <div class="intro-decoration">
-                <div class="circle circle-one"></div>
-                <div class="circle circle-two"></div>
-                <span>🏙️</span>
             </div>
 
         </section>
@@ -245,7 +228,7 @@
 
                     <div>
                         <span class="step-badge">Paso 3 de 3</span>
-                        <h4>¿Qué tipo de reclamo es?</h4>
+                        <h4 id="reclamo-titulo">¿Qué tipo de reclamo es?</h4>
                         <p id="reclamo-sub">Seleccioná una opción</p>
                     </div>
 
@@ -272,8 +255,8 @@
                     </div>
 
                     <div>
-                        <h4>Contanos qué pasó</h4>
-                        <p>Agregá todos los detalles que puedas</p>
+                        <h4 id="descripcion-titulo">Contanos qué pasó</h4>
+                        <p id="descripcion-sub">Agregá todos los detalles que puedas</p>
                     </div>
 
                 </div>
@@ -313,7 +296,7 @@
 
                     <div>
                         <h4>¿Dónde está?</h4>
-                        <p>Indicá la ubicación del problema</p>
+                        <p id="ubicacion-sub">Indicá la ubicación del problema</p>
                     </div>
 
                 </div>
@@ -360,7 +343,7 @@
 
                     <div>
                         <h4>Agregá una foto</h4>
-                        <p>Una imagen ayuda a entender mejor el problema</p>
+                        <p id="foto-sub">Una imagen ayuda a entender mejor el problema</p>
                     </div>
 
                 </div>
@@ -540,7 +523,41 @@
             <span class="lane-stripe"></span>
         </div>
 
-        <div class="bike-rider">🚲</div>
+        <div class="bike-rider">
+            <span class="bike-shadow"></span>
+            <svg class="bike-svg" viewBox="0 -10 64 58" xmlns="http://www.w3.org/2000/svg">
+                <!-- ruedas -->
+                <g class="wheel">
+                    <circle cx="14" cy="36" r="10" fill="none" stroke="#1F2A36" stroke-width="3"/>
+                    <path d="M14 26v20M4 36h20M7 29l14 14M21 29L7 43" stroke="#8795A3" stroke-width="1"/>
+                </g>
+                <g class="wheel">
+                    <circle cx="50" cy="36" r="10" fill="none" stroke="#1F2A36" stroke-width="3"/>
+                    <path d="M50 26v20M40 36h20M43 29l14 14M57 29L43 43" stroke="#8795A3" stroke-width="1"/>
+                </g>
+                <!-- cuadro -->
+                <g fill="none" stroke="#E4572E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 36L30 36L26 20Z"/>
+                    <path d="M26 20L45 20L30 36"/>
+                    <path d="M45 20L50 36"/>
+                </g>
+                <path d="M45 20L44 14L49 13" fill="none" stroke="#1F2A36" stroke-width="2" stroke-linecap="round"/>
+                <path d="M22 19h8" stroke="#1F2A36" stroke-width="2.6" stroke-linecap="round"/>
+                <!-- pedalier -->
+                <g class="crank">
+                    <path d="M30 30v12" stroke="#1F2A36" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="30" cy="36" r="2.4" fill="#1F2A36"/>
+                </g>
+                <!-- ciclista -->
+                <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M26 17L35 23L31 33" stroke="#2F4B6B" stroke-width="3.4"/>
+                    <path d="M26 17L37 4" stroke="#F2B134" stroke-width="5"/>
+                    <path d="M36 6L42 11L47 13" stroke="#E0A87E" stroke-width="2.4"/>
+                </g>
+                <circle cx="40" cy="-1" r="4.2" fill="#E0A87E"/>
+                <path d="M35.5 -1.5a4.6 4.6 0 0 1 9.2 0z" fill="#E4572E"/>
+            </svg>
+        </div>
 
     </div>
 

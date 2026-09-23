@@ -19,24 +19,8 @@
 
             <div class="header-brand">
 
-                <a href="index.html" class="anide-logo">
-                    <div class="anide-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-
-                    <div class="anide-text">
-                        <strong>ANIDE</strong>
-                        <small>Agencia Neuquina de Innovación para el Desarrollo</small>
-                    </div>
-                </a>
-
                 <div class="brand-title">
-                    <h1>Neuquén Responde</h1>
+                    <h1>Neuquén <span>Responde</span></h1>
                     <p>Ayudanos a mejorar nuestra ciudad</p>
                 </div>
 
@@ -47,7 +31,13 @@
 
                 <div class="date-box">
                     <span class="date-icon"><i class="fa-regular fa-calendar"></i></span>
-                    <span id="header-date">Cargando fecha...</span>
+                    <span id="header-date"></span>
+                    <script>
+                        (function () {
+                            var t = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                            document.getElementById('header-date').textContent = t.charAt(0).toUpperCase() + t.slice(1);
+                        })();
+                    </script>
                 </div>
 
             </div>
@@ -76,7 +66,7 @@
 
     <main class="page-content map-page">
 
-        <section class="intro">
+        <section class="intro intro-center">
 
             <div class="intro-text">
 
@@ -90,8 +80,8 @@
                 </h2>
 
                 <p>
-                    Mirá en qué zonas de la ciudad se concentran los reportes de los vecinos.
-                    Cuanto más intenso el color, más reportes hay en ese lugar.
+                    Mirá dónde se concentran los reportes de los vecinos. Cada color
+                    indica el tipo de situación; tocá un color para mostrarlo u ocultarlo.
                 </p>
 
             </div>
@@ -99,24 +89,41 @@
         </section>
 
 
-        <div class="map-toolbar">
+        <div class="map-card">
 
-            <div class="search-bar">
-                <div class="search-wrap">
-                    <input type="text" id="search-input" placeholder="Buscar calle o ciudad..." autocomplete="off">
-                    <div id="search-results"></div>
+            <div class="map-card-top">
+                <div class="search-bar">
+                    <div class="search-wrap">
+                        <i class="fa-solid fa-magnifying-glass search-ico"></i>
+                        <input type="text" id="search-input" placeholder="Buscar una calle o barrio..." autocomplete="off">
+                        <div id="search-results"></div>
+                    </div>
+                    <button id="btnUbicacion" class="btn-locate">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                        <span>Mi ubicación</span>
+                    </button>
                 </div>
-                <button id="btnUbicacion" class="btn-locate">
-                    <i class="fa-solid fa-location-crosshairs"></i>
-                    Mi ubicación
-                </button>
+
+                <div class="map-controls">
+                    <div class="filter-chips" id="filter-chips" aria-label="Filtrar por situación"></div>
+                    <div class="view-toggle" role="group" aria-label="Tipo de vista">
+                        <button type="button" class="active" data-view="puntos"><i class="fa-solid fa-circle-dot"></i> Puntos</button>
+                        <button type="button" data-view="calor"><i class="fa-solid fa-fire"></i> Calor</button>
+                    </div>
+                </div>
             </div>
 
             <div class="status-bar hidden" id="status-bar"></div>
 
             <div class="map-container">
                 <div id="map"></div>
+                <div class="map-total" id="map-total">Cargando reportes…</div>
             </div>
+
+            <p class="map-hint">
+                <i class="fa-regular fa-hand-pointer"></i>
+                Tocá cualquier punto del mapa para sumar tu reporte.
+            </p>
 
         </div>
 
@@ -128,23 +135,24 @@
     <div id="modal-overlay" class="hidden">
         <div id="modal">
             <div class="modal-header">
-                <h2>Reportar Bache</h2>
+                <h2>Nuevo reporte</h2>
                 <button type="button" id="modal-close-btn" class="modal-close">✕</button>
             </div>
 
             <form id="report-form">
-                <label for="description">Descripción del problema:</label>
-                <textarea id="description" rows="3" placeholder="Ej: Bache grande frente al hospital..." required></textarea>
-
-                <label for="severity">Gravedad:</label>
-                <select id="severity" required>
+                <label for="situacion">Situación:</label>
+                <select id="situacion" required>
                     <option value="">Seleccionar...</option>
-                    <option value="bajo">Bajo - Pequeño hueco</option>
-                    <option value="medio">Medio - Daño considerable</option>
-                    <option value="alto">Alto - Bache peligroso</option>
+                    <option value="situacion_mejorar">🔴 Situación para mejorar</option>
+                    <option value="situacion_riesgo">🟡 Situación de riesgo</option>
+                    <option value="experiencia_positiva">🟢 Experiencia positiva</option>
+                    <option value="propuesta_ciudadana">🔵 Propuesta ciudadana</option>
                 </select>
 
-                <label for="photo">Foto del bache:</label>
+                <label for="description">Descripción:</label>
+                <textarea id="description" rows="3" placeholder="Ej: Vereda rota frente al hospital..." required></textarea>
+
+                <label for="photo">Foto (opcional):</label>
                 <div class="photo-buttons">
                     <input type="file" id="photo" accept="image/*" class="hidden">
                     <button type="button" id="gallery-btn" class="btn-photo-fill">

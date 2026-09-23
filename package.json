@@ -6,7 +6,8 @@
   "main": "BackEnd/server.js",
   "scripts": {
     "start": "node --env-file-if-exists=.env BackEnd/server.js",
-    "dev": "node --watch --env-file-if-exists=.env BackEnd/server.js"
+    "dev": "node --watch --env-file-if-exists=.env BackEnd/server.js",
+    "seed": "node --env-file-if-exists=.env BackEnd/seed.js"
   },
   "engines": {
     "node": ">=22"

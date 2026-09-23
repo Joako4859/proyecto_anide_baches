@@ -54,12 +54,24 @@ function formatearFecha(fecha) {
 
 // ---------- Reportes del formulario (Supabase) ----------
 
-async function cargarUbicacionesBaseDeDatos() {
+// El teléfono NO se consulta: el mapa es público y no debe exponer datos de contacto
+async function cargarReportesBaseDeDatos() {
     try {
         const { rows } = await pool.query(
-            'SELECT lat, lng FROM reportes WHERE lat IS NOT NULL AND lng IS NOT NULL'
+            `SELECT lat, lng, categoria, tipo_problema, metodo_movimiento, descripcion, ubicacion, foto_url, fecha_creacion
+             FROM reportes WHERE lat IS NOT NULL AND lng IS NOT NULL ORDER BY id DESC`
         );
-        return rows;
+        return rows.map((f) => ({
+            lat: f.lat,
+            lng: f.lng,
+            categoria: f.categoria,
+            tipo: f.tipo_problema,
+            metodo: f.metodo_movimiento,
+            descripcion: f.descripcion,
+            ubicacion: f.ubicacion,
+            foto: f.foto_url ? '/' + f.foto_url.replace(/^\/+/, '') : null,
+            fecha: f.fecha_creacion ? formatearFecha(f.fecha_creacion) : null,
+        }));
     } catch (e) {
         // Si no hay tabla o conexión, devolver vacío sin romper el mapa
         console.error('Error leyendo reportes de la base:', e.message);
@@ -67,16 +79,35 @@ async function cargarUbicacionesBaseDeDatos() {
     }
 }
 
-// Redondeo a 4 decimales (~10 m): alcanza para el mapa de calor sin exponer el punto exacto
-const redondear = (n) => Math.round(Number(n) * 1e4) / 1e4;
+// Reportes creados desde el mapa (reportes.json), con el mismo formato
+function cargarReportesMapa() {
+    return cargarReportes().map((r) => ({
+        lat: r.lat,
+        lng: r.lng,
+        categoria: r.categoria,
+        tipo: null,
+        metodo: null,
+        descripcion: r.description,
+        ubicacion: null,
+        foto: typeof r.photo === 'string' && r.photo.startsWith('data:image/') ? r.photo : null,
+        fecha: r.date || null,
+    }));
+}
 
-// GET -> solo las coordenadas de todos los reportes (Supabase + JSON del mapa), sin ningún otro dato
+const CATEGORIAS = ['situacion_mejorar', 'situacion_riesgo', 'experiencia_positiva', 'propuesta_ciudadana'];
+
+// GET -> reportes para el mapa (Supabase + JSON del mapa), sin datos de contacto
 app.get('/api/reportes', async (req, res) => {
-    const todos = [...(await cargarUbicacionesBaseDeDatos()), ...cargarReportes()];
+    const todos = [...(await cargarReportesBaseDeDatos()), ...cargarReportesMapa()];
     res.json(
         todos
             .filter((r) => Number.isFinite(Number(r.lat)) && Number.isFinite(Number(r.lng)))
-            .map((r) => [redondear(r.lat), redondear(r.lng)])
+            .map((r) => ({
+                ...r,
+                lat: Number(r.lat),
+                lng: Number(r.lng),
+                categoria: CATEGORIAS.includes(r.categoria) ? r.categoria : null,
+            }))
     );
 });
 
@@ -87,12 +118,12 @@ app.post('/api/reportes', (req, res) => {
         lat: input.lat != null ? Number(input.lat) : null,
         lng: input.lng != null ? Number(input.lng) : null,
         description: String(input.description ?? '').trim(),
-        severity: String(input.severity ?? '').trim(),
+        categoria: String(input.categoria ?? '').trim(),
         photo: String(input.photo ?? '').trim(),
         date: String(input.date ?? '').trim() || formatearFecha(new Date()),
     };
 
-    if (reporte.lat === null || reporte.lng === null || !reporte.description || !reporte.severity) {
+    if (reporte.lat === null || reporte.lng === null || !reporte.description || !CATEGORIAS.includes(reporte.categoria)) {
         return res.status(400).json({ error: 'Faltan datos obligatorios.' });
     }
 
