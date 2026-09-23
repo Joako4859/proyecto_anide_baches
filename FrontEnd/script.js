@@ -41,12 +41,6 @@ let pendingPhoto = null;
 let userCity = null;
 let cityCircle = null;
 
-const severityColors = {
-    bajo: '#f1c40f',
-    medio: '#e67e22',
-    alto: '#e74c3c'
-};
-
 const photoInput = document.getElementById('photo');
 const photoPreview = document.getElementById('photo-preview');
 const previewImg = document.getElementById('preview-img');
@@ -88,58 +82,48 @@ if (photoInput) {
     });
 }
 
-const categoriaLabels = {
-    situacion_mejorar: 'Situación para mejorar',
-    situacion_riesgo: 'Situación de riesgo',
-    experiencia_positiva: 'Experiencia positiva',
-    propuesta_ciudadana: 'Propuesta ciudadana'
-};
+// ================= MAPA DE CALOR =================
+// Solo se muestra dónde hay reportes: la API devuelve únicamente coordenadas [lat, lng].
 
-const tipoLabels = {
-    vereda_rota: 'Vereda rota',
-    cruce_peligroso: 'Cruce peligroso',
-    mala_luz: 'Mala iluminación',
-    basura: 'Basura acumulada',
-    senial_peatonal: 'Señalización peatonal',
-    obstaculo: 'Obstáculos en la vereda',
-    bache: 'Bache en la calzada',
-    ciclovia_mal: 'Ciclovía en mal estado',
-    falta_bicicletero: 'Falta de bicicleteros',
-    senial_ciclista: 'Señalización ciclista',
-    ripio_escombros: 'Ripio o escombros',
-    poco_espacio: 'Poco espacio para circular',
-    falta_rampa: 'Falta de rampa',
-    rampa_mal: 'Rampa en mal estado',
-    vereda_obstaculos: 'Vereda con obstáculos',
-    cruce_sin_desnivel: 'Cruce sin desnivel accesible',
-    semaforo_sonoro: 'Semáforo sin señal sonora',
-    transporte_inaccesible: 'Transporte sin accesibilidad'
-};
+let heatPoints = [];
 
-function reportPopup(report) {
-    const photoHtml = report.photo
-        ? `<img src="${report.photo}" class="latest-photo" onclick="window.open('${report.photo}','_blank')">`
-        : '<em>Sin foto</em>';
-
-    let titulo;
-    if (report.severity) {
-        titulo = 'Bache - ' + report.severity.toUpperCase();
-    } else {
-        const cat = categoriaLabels[report.categoria] || '';
-        const tipo = tipoLabels[report.tipo] || report.tipo || '';
-        titulo = [cat, tipo].filter(Boolean).join(' - ') || 'Reporte';
+const heatLayer = L.heatLayer([], {
+    radius: 30,
+    blur: 20,
+    // maxZoom bajo = cada reporte pesa lo mismo en cualquier zoom (si no, se desvanecen al alejar)
+    maxZoom: 10,
+    // Cantidad de reportes superpuestos para llegar al color más intenso
+    max: 5,
+    minOpacity: 0.45,
+    gradient: {
+        0.2: '#FDE68A',
+        0.45: '#F5B041',
+        0.65: '#E67E22',
+        0.85: '#E74C3C',
+        1.0: '#922B21'
     }
+}).addTo(map);
 
-    const ubicacionHtml = report.ubicacion
-        ? `<br><small>📍 ${report.ubicacion}</small>`
-        : '';
+const HeatLegend = L.Control.extend({
+    options: { position: 'bottomright' },
+    onAdd: function() {
+        const div = L.DomUtil.create('div', 'heat-legend');
+        div.innerHTML = `
+            <div class="heat-legend-title">Concentración de reportes</div>
+            <div class="heat-legend-bar"></div>
+            <div class="heat-legend-labels"><span>Menos</span><span>Más</span></div>
+            <div class="heat-legend-count" id="heat-count">Cargando…</div>
+        `;
+        return div;
+    }
+});
+new HeatLegend().addTo(map);
 
-    return `
-        <strong>${titulo}</strong><br>
-        ${photoHtml}
-        ${report.description}${ubicacionHtml}<br>
-        <small>${report.date || ''}</small>
-    `;
+function updateHeatCount() {
+    const el = document.getElementById('heat-count');
+    if (!el) return;
+    const n = heatPoints.length;
+    el.textContent = n === 0 ? 'Todavía no hay reportes' : n + (n === 1 ? ' reporte' : ' reportes');
 }
 
 function fetchReports() {
@@ -162,15 +146,15 @@ function createIcon(color) {
     });
 }
 
-function loadMarkers() {
-    fetchReports().then(function(reports) {
-        reports.forEach(function(report) {
-            const color = severityColors[report.severity] || '#3498db';
-            L.marker([report.lat, report.lng], { icon: createIcon(color) })
-                .addTo(map)
-                .bindPopup(reportPopup(report));
-        });
-    }).catch(function() {});
+function loadHeatmap() {
+    fetchReports().then(function(points) {
+        heatPoints = Array.isArray(points) ? points : [];
+        heatLayer.setLatLngs(heatPoints);
+        updateHeatCount();
+    }).catch(function() {
+        const el = document.getElementById('heat-count');
+        if (el) el.textContent = 'No se pudieron cargar los reportes';
+    });
 }
 
 const searchInput = document.getElementById('search-input');
@@ -364,11 +348,10 @@ reportForm.addEventListener('submit', function(e) {
                 showStatus(result.error, 'error');
                 return;
             }
-            const color = severityColors[severity] || '#3498db';
-            L.marker([report.lat, report.lng], { icon: createIcon(color) })
-                .addTo(map)
-                .bindPopup(reportPopup(report))
-                .openPopup();
+            heatPoints.push([report.lat, report.lng]);
+            heatLayer.setLatLngs(heatPoints);
+            updateHeatCount();
+            showStatus('¡Gracias! Tu reporte fue registrado.', 'success');
 
             modalOverlay.classList.add('hidden');
             pendingLatLng = null;
@@ -379,4 +362,4 @@ reportForm.addEventListener('submit', function(e) {
         });
 });
 
-loadMarkers();
+loadHeatmap();

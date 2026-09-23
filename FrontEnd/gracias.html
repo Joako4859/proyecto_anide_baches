@@ -6,6 +6,70 @@
     <title>Gracias por tu reporte — ANIDE</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="inicio.css" />
+    <style>
+        .gracias-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 16px;
+        }
+
+        .gracias-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-top: 4px solid var(--accent);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 40px 32px 32px;
+            text-align: center;
+        }
+
+        .gracias-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gracias-card h2 {
+            margin: 0 0 10px;
+            font-size: 24px;
+            color: var(--ink);
+        }
+
+        .gracias-card p {
+            margin: 0 0 28px;
+            color: var(--ink-soft);
+            line-height: 1.6;
+        }
+
+        .gracias-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .gracias-actions .submit-btn,
+        .gracias-actions .btn-map {
+            display: block;
+            margin: 0;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        header {
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -15,20 +79,21 @@
         </div>
     </header>
 
-    <div class="layout">
-        <div class="panel">
-            <div class="panel-head">
-                <h3>¡Gracias por tu reporte!</h3>
+    <main class="gracias-wrap">
+        <div class="gracias-card">
+            <div class="gracias-icon" aria-hidden="true">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
             </div>
-            <div class="panel-body">
-                <p style="text-align:center; margin:0 0 1.5rem 0; color:var(--ink-soft);">
-                    Tu reporte fue registrado exitosamente. Ayudás a mejorar nuestra comunidad.
-                </p>
-                <a href="index.html" class="submit-btn" style="display:block; text-align:center; text-decoration:none;">Reportar otro problema</a>
+            <h2>¡Gracias por tu reporte!</h2>
+            <p>Tu reporte fue registrado correctamente.<br>Con tu ayuda mejoramos la ciudad.</p>
+            <div class="gracias-actions">
+                <a href="index.html" class="submit-btn">Reportar otro problema</a>
                 <a href="mapa.html" class="btn-map">Ver mapa de reportes</a>
             </div>
         </div>
-    </div>
+    </main>
 
     <footer>
         © 2026 ANIDE Animación y Diseño — Todos los derechos reservados

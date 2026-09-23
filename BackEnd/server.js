@@ -54,24 +54,12 @@ function formatearFecha(fecha) {
 
 // ---------- Reportes del formulario (Supabase) ----------
 
-async function cargarReportesBaseDeDatos() {
+async function cargarUbicacionesBaseDeDatos() {
     try {
         const { rows } = await pool.query(
-            'SELECT * FROM reportes WHERE lat IS NOT NULL AND lng IS NOT NULL ORDER BY id DESC'
+            'SELECT lat, lng FROM reportes WHERE lat IS NOT NULL AND lng IS NOT NULL'
         );
-        return rows.map((fila) => ({
-            lat: Number(fila.lat),
-            lng: Number(fila.lng),
-            description: fila.descripcion,
-            ubicacion: fila.ubicacion,
-            tipo: fila.tipo_problema,
-            categoria: fila.categoria,
-            metodo: fila.metodo_movimiento,
-            severity: null,
-            photo: fila.foto_url ? '/' + fila.foto_url.replace(/^\/+/, '') : null,
-            date: fila.fecha_creacion ? formatearFecha(fila.fecha_creacion) : null,
-            source: 'form',
-        }));
+        return rows;
     } catch (e) {
         // Si no hay tabla o conexión, devolver vacío sin romper el mapa
         console.error('Error leyendo reportes de la base:', e.message);
@@ -79,10 +67,17 @@ async function cargarReportesBaseDeDatos() {
     }
 }
 
-// GET -> devuelve todos los reportes (Supabase + JSON del mapa)
+// Redondeo a 4 decimales (~10 m): alcanza para el mapa de calor sin exponer el punto exacto
+const redondear = (n) => Math.round(Number(n) * 1e4) / 1e4;
+
+// GET -> solo las coordenadas de todos los reportes (Supabase + JSON del mapa), sin ningún otro dato
 app.get('/api/reportes', async (req, res) => {
-    const reportes = await cargarReportesBaseDeDatos();
-    res.json([...reportes, ...cargarReportes()]);
+    const todos = [...(await cargarUbicacionesBaseDeDatos()), ...cargarReportes()];
+    res.json(
+        todos
+            .filter((r) => Number.isFinite(Number(r.lat)) && Number.isFinite(Number(r.lng)))
+            .map((r) => [redondear(r.lat), redondear(r.lng)])
+    );
 });
 
 // POST -> guarda un reporte nuevo del mapa (JSON)
@@ -104,7 +99,7 @@ app.post('/api/reportes', (req, res) => {
     const reportes = cargarReportes();
     reportes.push(reporte);
     guardarReportes(reportes);
-    res.json({ ok: true, reporte });
+    res.json({ ok: true });
 });
 
 // POST del formulario principal -> inserta en Supabase y redirige a gracias.html

@@ -1060,6 +1060,55 @@ textarea {
     border: none;
 }
 
+/* Leyenda del mapa de calor */
+.heat-legend {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    padding: 10px 12px;
+    width: 180px;
+    font-family: 'Poppins', sans-serif;
+    color: var(--ink-soft);
+}
+
+.heat-legend-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+
+.heat-legend-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #FDE68A, #F5B041, #E67E22, #E74C3C, #922B21);
+}
+
+.heat-legend-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.heat-legend-count {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-deep);
+}
+
+@media (max-width: 480px) {
+    .heat-legend {
+        width: 150px;
+        padding: 8px 10px;
+    }
+}
+
 .status-bar {
     background: var(--accent);
     color: #fff;
