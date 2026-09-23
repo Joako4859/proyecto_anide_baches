@@ -381,17 +381,28 @@ function reverseGeocodeForm(lat, lng) {
         .catch(function() {});
 }
 
-function geocodificarTexto(direccion, limiteMs) {
-    const limite = limiteMs || 6000;
-    const controlador = new AbortController();
-    const temporizador = setTimeout(() => controlador.abort(), limite);
-    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(direccion) + '&limit=1&accept-language=es&countrycodes=ar', { signal: controlador.signal })
+// Zonas de búsqueda (oeste,norte,este,sur): primero Neuquén capital y alrededores, después toda la provincia
+const VIEWBOX_CIUDAD = '-68.30,-38.80,-67.90,-39.05';
+const VIEWBOX_PROVINCIA = '-71.95,-36.10,-68.00,-41.10';
+
+function buscarEnZona(direccion, viewbox, signal) {
+    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(direccion) + '&limit=1&accept-language=es&countrycodes=ar&bounded=1&viewbox=' + viewbox, { signal: signal })
         .then(function(res) { return res.json(); })
         .then(function(data) {
             if (data && data[0]) {
                 return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
             }
             return null;
+        });
+}
+
+function geocodificarTexto(direccion, limiteMs) {
+    const limite = limiteMs || 6000;
+    const controlador = new AbortController();
+    const temporizador = setTimeout(() => controlador.abort(), limite);
+    return buscarEnZona(direccion, VIEWBOX_CIUDAD, controlador.signal)
+        .then(function(coords) {
+            return coords || buscarEnZona(direccion, VIEWBOX_PROVINCIA, controlador.signal);
         })
         .catch(function() { return null; })
         .finally(function() { clearTimeout(temporizador); });
@@ -435,15 +446,22 @@ let temporizadorGeocode = null;
 if (ubicacionInput) {
     ubicacionInput.addEventListener('input', () => {
         clearTimeout(temporizadorGeocode);
+        // La dirección cambió: descartar coordenadas anteriores para no enviar un punto viejo
+        latInput.value = '';
+        lngInput.value = '';
         const direccion = ubicacionInput.value.trim();
         if (direccion.length < 4) return;
         temporizadorGeocode = setTimeout(() => {
             geocodificarTexto(direccion, 6000).then(function(coords) {
+                // Ignorar respuestas de búsquedas viejas si el usuario siguió escribiendo
+                if (ubicacionInput.value.trim() !== direccion) return;
                 if (coords) {
                     latInput.value = coords.lat;
                     lngInput.value = coords.lng;
                     setMapPosition(coords.lat, coords.lng, 16);
                     setUbicacionStatus('✓ Dirección ubicada. Podés arrastrar el pin para confirmar.', 'ok');
+                } else {
+                    setUbicacionStatus('⚠ No encontramos esa dirección en Neuquén. Probá con calle y altura, o calle y esquina.', 'err');
                 }
             });
         }, 700);

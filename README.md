@@ -2,7 +2,7 @@
 
 Aplicación web para que los vecinos reporten problemas en la vía pública (baches, luminarias en mal estado, veredas rotas, acumulación de basura, desagües tapados, etc.) y los visualicen en un **mapa interactivo**.
 
-Desarrollada con **HTML, CSS, JavaScript, PHP y MySQL**, pensada para correr localmente con **XAMPP**.
+Desarrollada con **HTML, CSS, JavaScript, Node.js (Express) y Supabase (PostgreSQL)**.
 
 ## ✨ Funcionalidades
 
@@ -11,7 +11,7 @@ Desarrollada con **HTML, CSS, JavaScript, PHP y MySQL**, pensada para correr loc
   - Descripción, ubicación y teléfono de contacto.
   - Carga de foto desde la galería o directamente con la cámara (desde un celular).
   - Vista previa de la imagen antes de enviar.
-  - Los datos se guardan en la base de datos MySQL.
+  - Los datos se guardan en la base de datos de **Supabase**.
 - **Mapa interactivo** (`FrontEnd/mapa.html`):
   - Mapa de calles con [Leaflet.js](https://leafletjs.com/).
   - Marcadores con colores según la gravedad del bache:
@@ -29,140 +29,121 @@ Desarrollada con **HTML, CSS, JavaScript, PHP y MySQL**, pensada para correr loc
 
 ```
 proyecto_anide_baches/
-├── FrontEnd/                      # Interfaz de usuario
+├── FrontEnd/                      # Interfaz de usuario (se sirve como sitio estático)
 │   ├── index.html                 # Página de reporte (formulario)
 │   ├── mapa.html                  # Mapa interactivo de reportes
+│   ├── gracias.html               # Página de confirmación
 │   ├── inicio.css / styles.css    # Estilos
 │   ├── inicio.js                  # Lógica del formulario (cámara/galería)
 │   └── script.js                  # Lógica del mapa (Leaflet)
-└── BackEnd/                       # Servidor (PHP + BD)
-    ├── conexion.php               # Conexión PDO a MySQL
-    ├── esquema.sql                # Script para crear la base de datos
-    ├── registrar_reporte.php      # Guarda reportes del formulario en MySQL
-    ├── reportes.php               # API JSON de los reportes del mapa
-    ├── gracias.php                # Página de confirmación
-    ├── reportes.json              # Almacenamiento de reportes del mapa
-    └── uploads/                   # Fotos subidas (requiere permisos de escritura)
+├── BackEnd/                       # Servidor Node.js
+│   ├── server.js                  # Servidor Express + API
+│   ├── db.js                      # Conexión a Supabase (lee las variables de entorno)
+│   ├── esquema_supabase.sql       # Script para crear las tablas en Supabase
+│   ├── reportes.json              # Almacenamiento de reportes del mapa
+│   └── uploads/                   # Fotos subidas
+├── .env.example                   # Plantilla de variables de entorno
+└── package.json
 ```
+
+### API
+
+| Método | Ruta | Qué hace |
+| --- | --- | --- |
+| `POST` | `/api/registrar-reporte` | Recibe el formulario (con foto) y lo guarda en Supabase |
+| `GET` | `/api/reportes` | Devuelve todos los reportes (Supabase + `reportes.json`) para el mapa |
+| `POST` | `/api/reportes` | Guarda un reporte creado desde el mapa en `reportes.json` |
 
 ## 📋 Requisitos
 
-- [XAMPP](https://www.apachefriends.org/es/index.html) (Apache + MySQL + PHP 7.4 o superior). Compatible con **Windows**, **Linux** y **macOS**.
-- Conexión a internet para cargar los mapas (Leaflet y tiles de Esri) y el buscador de calles (Nominatim).
-- Navegador moderno (Chrome, Firefox, Edge).
+- [Node.js](https://nodejs.org/) **22 o superior**.
+- Una cuenta en [Supabase](https://supabase.com) (gratis).
+- Conexión a internet para los mapas (Leaflet y tiles de Esri), el buscador de calles (Nominatim) y la base de datos.
+
+Ya **no hace falta XAMPP**.
 
 ## 🚀 Instalación y puesta en marcha
 
-### Paso 1 — Instalar XAMPP
-
-**Windows / macOS**
-
-1. Descargá el instalador desde [apachefriends.org](https://www.apachefriends.org/es/download.html).
-2. Ejecutalo y seguí el asistente (dejá la instalación por defecto).
-
-**Linux (Debian/Ubuntu/Mint)**
+### Paso 1 — Clonar e instalar dependencias
 
 ```bash
-# 1) Descargar el instalador .run desde apachefriends.org
-# 2) Darle permisos de ejecución e instalarlo:
-chmod +x xampp-linux-*-installer.run
-sudo ./xampp-linux-*-installer.run
-
-# 3) Una vez instalado, iniciar todos los servicios:
-sudo /opt/lampp/lampp start
-
-# Si querés solo Apache y MySQL:
-sudo /opt/lampp/xampp startapache && sudo /opt/lampp/xampp startmysql
+git clone https://github.com/Joako4859/proyecto_anide_baches.git
+cd proyecto_anide_baches
+npm install
 ```
 
-### Paso 2 — Copiar el proyecto dentro de `htdocs`
+### Paso 2 — Crear las tablas en Supabase
 
-XAMPP sirve los sitios web desde la carpeta `htdocs`:
+1. Entrá a tu proyecto en [supabase.com](https://supabase.com).
+2. En el menú izquierdo, abrí **SQL Editor** → **New query**.
+3. Pegá el contenido de **`BackEnd/esquema_supabase.sql`** y tocá **Run**.
+4. En **Table Editor** tienen que aparecer las tablas `reportes` y `contactos`.
 
-| Sistema | Ruta de `htdocs` |
+### Paso 3 — Configurar las variables de entorno
+
+Copiá la plantilla:
+
+```bash
+cp .env.example .env
+```
+
+(En Windows PowerShell: `Copy-Item .env.example .env`)
+
+Abrí `.env` y completá **`DB_PASSWORD`** con la contraseña de la base de Supabase. El resto ya viene cargado:
+
+| Variable | Valor |
 | --- | --- |
-| Windows | `C:\xampp\htdocs` |
-| Linux | `/opt/lampp/htdocs` |
-| macOS | `/Applications/XAMPP/htdocs` |
+| `DB_HOST` | `aws-0-sa-east-1.pooler.supabase.com` |
+| `DB_PORT` | `5432` |
+| `DB_NAME` | `postgres` |
+| `DB_USER` | `postgres.gztcavqtcihhcpzsgtcq` |
+| `DB_PASSWORD` | la contraseña de la base (pedísela al equipo) |
+| `PORT` | puerto del servidor local (por defecto `3000`) |
 
-Copiá **toda la carpeta del proyecto** (la raíz que contiene `FrontEnd/` y `BackEnd/`) dentro de `htdocs`.
+Estos datos están en Supabase → botón **Connect** → **Session pooler**. Si no sabés la contraseña, se puede cambiar en **Project Settings → Database → Reset database password**.
 
-```
-C:\xampp\htdocs\proyecto_anide_baches\      (Windows)
-/opt/lampp/htdocs/proyecto_anide_baches/    (Linux)
-```
+> ⚠️ El archivo `.env` **no se sube a git** (está en `.gitignore`). Nunca subas la contraseña al repositorio.
 
-Si lo bajaste de GitHub, también podés clonarlo directamente ahí:
-
-```bash
-cd /opt/lampp/htdocs
-git clone https://github.com/TU_USUARIO/proyecto_anide_baches.git
-```
-
-### Paso 3 — Iniciar Apache y MySQL
-
-- **Windows:** abrí el **Panel de Control de XAMPP** y presioná **Start** en *Apache* y *MySQL*.
-- **Linux:** `sudo /opt/lampp/lampp start` (o el atajo `sudo /opt/lampp/xampp start`).
-- **macOS:** abrí la app **Manager** de XAMPP y activá Apache y MySQL.
-
-Verificá que ambos servicios queden de color verde en el panel.
-
-### Paso 4 — Crear la base de datos
-
-Los reportes del formulario (`index.html`) se guardan en **MySQL**. Para crearla:
-
-1. Asegurate de tener MySQL activo.
-2. Entrá a **phpMyAdmin**: [`http://localhost/phpmyadmin`](http://localhost/phpmyadmin).
-3. Andá a la pestaña **Importar** / **SQL**.
-4. Ejecutá el contenido de **`BackEnd/esquema.sql`**.
-
-Alternativa por consola:
+### Paso 4 — Iniciar el servidor
 
 ```bash
-sudo /opt/lampp/bin/mysql -u root < BackEnd/esquema.sql
+npm start
 ```
 
-Esto crea la base **`anide_formulario`** con las tablas `contactos` y `reportes`. La configuración por defecto de XAMPP usa el usuario `root` sin contraseña; si tu instalación tiene otra contraseña, actualizala en `BackEnd/conexion.php`.
-
-### Paso 5 — Dar permisos de escritura (solo Linux/macOS)
-
-Los reportes del mapa y las fotos necesitan carpeta escribible:
+Para desarrollo (se reinicia solo al guardar cambios):
 
 ```bash
-sudo chmod -R 777 /opt/lampp/htdocs/proyecto_anide_baches/BackEnd
+npm run dev
 ```
 
-### Paso 6 — Acceder a la web
+### Paso 5 — Acceder a la web
 
-Abrí en el navegador:
+- **Formulario de reporte:** [`http://localhost:3000`](http://localhost:3000)
+- **Mapa de reportes:** [`http://localhost:3000/mapa.html`](http://localhost:3000/mapa.html)
 
-- **Formulario de reporte:** [`http://localhost/proyecto_anide_baches/FrontEnd/index.html`](http://localhost/proyecto_anide_baches/FrontEnd/index.html)
-- **Mapa de reportes:** [`http://localhost/proyecto_anide_baches/FrontEnd/mapa.html`](http://localhost/proyecto_anide_baches/FrontEnd/mapa.html)
-
-> ⚠️ **Importante:** siempre ingresá por `http://localhost/...`. Si abrís el archivo `.html` con doble clic, el formulario y el mapa no van a poder hablar con el backend (PHP) y se van a romper los reportes.
+> ⚠️ **Importante:** siempre ingresá por `http://localhost:3000`. Si abrís el `.html` con doble clic o con Live Server, el formulario y el mapa no van a poder hablar con el backend.
 
 ---
 
 ## 🧪 Probar que todo funciona
 
-1. Abrí `index.html` y completá el formulario con un reporte de prueba (incluyendo una foto).
-2. Deberías llegar a `gracias.php` ("¡Gracias por tu reporte!").
-3. Entrá a phpMyAdmin → base `anide_formulario` → tabla `reportes` y verificá que el registro esté.
+1. Abrí `http://localhost:3000` y completá el formulario con un reporte de prueba (incluyendo una foto).
+2. Deberías llegar a `gracias.html` ("¡Gracias por tu reporte!").
+3. En Supabase → **Table Editor** → `reportes`, verificá que el registro esté.
 4. Abrí `mapa.html`, hacé clic en el mapa, completá el popup y guardá: el marcador debería aparecer y también quedar guardado en `BackEnd/reportes.json`.
 
 ## ❌ Solución de problemas
 
 | Problema | Solución |
 | --- | --- |
-| **Apache no inicia (puerto 80 en uso)** | Otro servidor web ocupa el puerto. En Linux detené el Apache del sistema: `sudo systemctl stop apache2`, o cambiá el puerto de Apache a 8080 desde el panel de XAMPP. |
-| **MySQL no inicia** | Eliminá archivos corruptos: en Linux, `rm -rf /opt/lampp/var/mysql/*.err` o reemplazá la carpeta `var/mysql` por una copia limpia. Suele ser la causa más común de fallo de MySQL. |
-| **Error de conexión a la base de datos** | Verificá que creaste la BD ejecutando `esquema.sql` y que el usuario/contraseña de `BackEnd/conexion.php` coincida con tu MySQL. |
-| **No se guardan las fotos** | Revisá los permisos de `BackEnd/uploads/` (debe ser escribible). En Linux: `chmod -R 777`. |
-| **No se guardan reportes del mapa** | Verificá que `BackEnd/reportes.json` exista y tenga permisos de escritura. |
+| **`Faltan variables de entorno: ...` al iniciar** | No existe el `.env` o le falta algún dato. Copiá `.env.example` como `.env` y completá `DB_PASSWORD`. |
+| **`No se pudo guardar el reporte`** | Mirá el mensaje en la consola donde corre `npm start`. Normalmente es contraseña incorrecta o que no se ejecutó `esquema_supabase.sql`. |
+| **`password authentication failed`** | La contraseña de `.env` no es la correcta. Reseteala en Supabase y actualizala. |
+| **`no tenant identifier provided` / `Tenant or user not found`** | El `DB_USER` tiene que ser `postgres.gztcavqtcihhcpzsgtcq` (con el punto y el código), no solo `postgres`. |
+| **No conecta usando `db.xxxx.supabase.co`** | Esa es la *Direct connection* y solo funciona con IPv6. Usá el host del **Session pooler**. |
+| **`EADDRINUSE` (puerto en uso)** | Otro programa usa el puerto 3000. Cambiá `PORT` en `.env`. |
 | **El mapa se ve sin fondo** | Requiere internet (tiles de Esri y Leaflet desde CDN). |
 | **El buscador de calles no responde** | El servicio Nominatim de OpenStreetMap limita el uso intensivo; esperá unos segundos y reintentá. |
-| **La página muestra "Acceso denegado" o no carga el CSS** | Verificá la ruta: PHP puede necesitar `include_path` o que el archivo esté dentro de `htdocs` (los enlaces relativos `../FrontEnd` y `../BackEnd` dependen del nombre de la carpeta). |
-| **Errores de PHP visibles en pantalla** | En `BackEnd/conexion.php` se muestran errores JSON genéricos; revisá el log de Apache en `/opt/lampp/logs/error_log`. |
 
 ## 👥 Contribuciones
 
@@ -172,6 +153,7 @@ Abrí en el navegador:
 - Envío de notificaciones (correo o WhatsApp) al reportarse un bache.
 - Estado de los reportes (recibido / en proceso / resuelto).
 - Estadísticas por tipo de problema y por barrio.
+- Guardar las fotos en Supabase Storage.
 - Soporte para más ciudades.
 
 ## 🛠️ Tecnologías
@@ -179,11 +161,10 @@ Abrí en el navegador:
 | Capa | Tecnología |
 | --- | --- |
 | Frontend | HTML5, CSS3, JavaScript (vanilla) |
-| Backend | PHP (PDO) |
-| Base de datos | MySQL (phpMyAdmin) |
+| Backend | Node.js + Express |
+| Base de datos | Supabase (PostgreSQL) |
 | Mapas | Leaflet.js + tiles de Esri |
 | Geolocalización | OpenStreetMap / Nominatim |
-| Servidor local | XAMPP (Apache + MySQL + PHP) |
 
 ## 📄 Licencia
 

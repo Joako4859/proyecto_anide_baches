@@ -1,0 +1,19 @@
+{
+  "name": "proyecto-anide-baches",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ANIDE - Reporte de baches y problemas de circulación",
+  "main": "BackEnd/server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env BackEnd/server.js",
+    "dev": "node --watch --env-file-if-exists=.env BackEnd/server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "multer": "^2.4.0",
+    "pg": "^8.23.0"
+  }
+}

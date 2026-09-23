@@ -110,7 +110,7 @@
         <form
             id="report-form"
             class="report-form"
-            action="../BackEnd/registrar_reporte.php"
+            action="/api/registrar-reporte"
             method="POST"
             enctype="multipart/form-data"
         >
@@ -507,9 +507,7 @@
 
             <!-- ================= CAMPOS OCULTOS PARA PHP ================= -->
 
-            <select id="tipo" name="tipo_problema" class="hidden-select">
-                <option value="">Seleccionar...</option>
-            </select>
+            <input type="hidden" id="tipo" name="tipo_problema" value="">
 
             <input type="hidden" id="categoria" name="categoria" value="">
             <input type="hidden" id="metodo-movimiento" name="metodo_movimiento" value="">
